@@ -76,6 +76,8 @@ Figma or code is a choice per team, and the rules are the same in both. Where sc
 3. **Rules become checks.** If a rule can be measured, a script measures it.
 4. **Checks get tested.** A QA that reports zero problems might just be blind. Prove it isn't.
 
+A second reviewer feeds the loop, it doesn't join it. Let a review that knows the design system find the meaning-level issues once (a token on the wrong palette step, a valid size in the wrong role, a local stand-in for a component the system already has), then encode what it found as build rules and checks. The process gets leaner, not longer.
+
 ## License
 
 MIT
