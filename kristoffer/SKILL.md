@@ -7,7 +7,7 @@ description: Use when a customer's design system and an AI coding agent don't ge
 
 **Design engineer. I ship with Claude Code.**
 
-100+ screens to production · handover in a day, 2–3 questions back from dev · 97.8% of new text on design-system styles
+10+ products shipped. Handover takes a day, and development comes back with two or three questions. 97.8% of new text lands on design-system styles.
 
 Live work: [coachbot.ai](https://coachbot.ai) (redesign and build). Client work under NDA, shown live on request.
 
@@ -29,7 +29,7 @@ Enterprise design systems live in Figma; the code follows. I work on both sides:
 Product designer in a programme that replaces a legacy back-office system. My part: discovery, screen specs, prototypes the agent builds on the client's design system (first in Figma, now in code), review rounds with the product owner and domain experts, handover to development, and the list of what the design system is missing for its lead.
 
 - Ran discovery myself: interviews and shadowing with the people doing the work
-- 100+ screens to production across both phases below. Handover takes a day, 2–3 questions come back from dev
+- Handover takes a day, and development comes back with two or three questions
 
 **Phase 1: the agent builds in Figma**
 
@@ -78,6 +78,7 @@ I ran it next to my ui-lint on three client prototypes (desktop-only, so mobile 
 
 ## What I'd bring back to Impeccable
 
+- Teams need more than the tool. I get design teams ready to work with agents: their system written down so an agent can follow it, rules it can be held to, checks the team can trust. That's how a team gets AI-design-ready, and how a product like Impeccable gets adopted instead of tried once
 - Enterprise teams need the agent to respect *their* tokens and components, not general taste alone
 - A design review must see slot and nested content, or it passes what it never saw
 - The reviewer needs its own tests: a clean result on a big input is a bug signal
@@ -93,4 +94,4 @@ I ran it next to my ui-lint on three client prototypes (desktop-only, so mobile 
 
 ## Invoke
 
-contact@kristofferlange.com · [kristofferlange.com](https://kristofferlange.com)
+contact@kristofferlange.com, [kristofferlange.com](https://kristofferlange.com)
