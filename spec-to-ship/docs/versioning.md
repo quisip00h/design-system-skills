@@ -17,7 +17,7 @@ A ticket always points to a release, never to current: developers must not build
 - Small changes between two releases get no number. They are lines under Unreleased.
 
 ## What a release needs
-All five parts done: click-dummy, spec (`../templates/screen-spec.md`), copy EN/DE with keys, field mapping (`templates/feature/inventory/fields.md`), changelog. The release command refuses otherwise.
+All five parts done: click-dummy, spec (`templates/screen-spec.md` at the repo root), copy EN/DE with keys, field mapping (`templates/feature/inventory/fields.md`), changelog. The release command refuses otherwise.
 
 ## The changelog
 One file per feature, `library/<feature>/CHANGELOG.md`, newest on top. Every line: date, kind (Added, Changed, Removed, Fixed), what, and why if it is not obvious. The author is a role.

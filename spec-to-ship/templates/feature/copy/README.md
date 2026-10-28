@@ -1,3 +1,3 @@
 # Copy
 
-`<area>.en.json` and `<area>.de.json`, flat keys `<area>.<context>.<name>`, placeholders `{{name}}`. Every key exists in both files; an empty DE value is allowed only while its tone or term is still open (note it in the spec's § 11.5). No demo data. British English (-ise); German uses "Sie".
+`<area>.en.json` and `<area>.de.json`, flat keys `<area>.<context>.<name>`, placeholders `{{name}}`. Every key exists in both files; an empty DE value is allowed only while its tone or term is still open (list it in the spec's open questions, §10). No demo data. British English (-ise); German uses "Sie".

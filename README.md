@@ -1,5 +1,7 @@
 # design-system-skills
 
+[![ui-lint self-test](https://github.com/quisip00h/design-system-skills/actions/workflows/ui-lint.yml/badge.svg)](https://github.com/quisip00h/design-system-skills/actions/workflows/ui-lint.yml)
+
 Skills and process for making coding agents build on a team's **own** design system instead of the average of the internet.
 
 It covers both sides of the work:

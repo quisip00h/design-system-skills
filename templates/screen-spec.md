@@ -1,100 +1,105 @@
 <!--
-  SCREEN SPEC TEMPLATE — copy to pilot-<name>/spec.md, then fill WITH the designer.
+  SCREEN SPEC TEMPLATE. Copy it next to the build, one file per screen or use case
+  (for example specs/uc01-<name>.spec.md), then fill it WITH the designer.
 
-  ╔══════════════════════════════════════════════════════════════════════╗
-  ║ THE ONE RULE: NEVER INVENT. If research/ doesn't cover a point, ASK    ║
-  ║ the designer and fill it together. A spec built on silent guesses        ║
-  ║ produces the wrong screen. When unsure → §10 + ask. Always. No excuses.║
-  ╚══════════════════════════════════════════════════════════════════════╝
+  THE ONE RULE: NEVER INVENT. If the research does not cover a point, ASK the designer
+  and fill it in together. A spec built on silent guesses produces the wrong screen.
+  When unsure, add it to §10 and ask. Always.
 
-  Tag every claim:  [researched] fact from research/  ·  [assumed] needs validation  ·  [open] blocks build, must ask
-  Weight to complexity: substantial screen → fill fully. Simple confirm/empty screen → a 5-line spec in the pilot README is enough (don't make this ceremony).
-  Precision core = §2 §3 §5 §8 §9 (the ambiguity zones). §6 §7 = quick verify vs the live DS. §1 §4 §10 = framing.
+  Tag every claim, the same tags as templates/CLAUDE.md:
+    ✓ validated (research, the data contract or a ruling)   ~ assumed (needs validation)
+    ? open (blocks the build, must ask)                      ⚠ conflict (two sources disagree)
+
+  Weigh it to the screen: a substantial screen gets the full spec; a simple confirm or empty
+  screen needs five lines, not this ceremony.
+  Precision core: §2, §3, §5, §8, §9 (where builds go wrong). Quick checks against the live DS: §6, §7.
+  Framing: §1, §4, §10.
 -->
 
-# Spec — `<Screen name>`
+# Spec: `<Screen name>`
 
 | | |
 |---|---|
-| **Module** | e.g. Onboarding / Invoicing / Case workspace |
-| **Source frame** | Figma URL + node-id (if replicating) — or "from research, no frame yet" |
-| **Mode** | Replicate / Enhance |
-| **Research refs** | e.g. `research/<area>-synthesis.md §…` (or "none — flag assumptions") |
-| **Status** | draft / ready-to-build / built |
+| **Module** | e.g. onboarding, invoicing, case workspace |
+| **Source frame** | Figma frame link, if replicating, or "from research, no frame yet" |
+| **Mode** | replicate or enhance |
+| **Research refs** | e.g. `research/<area>-synthesis.md`, or "none, assumptions flagged" |
+| **Status** | draft, ready to build, built |
 | **Date** | YYYY-MM-DD |
 
 ---
 
-## §1 · User & JTBD *(framing — keep short)*
-<!-- Who uses this, what job are they trying to get done here, in what context. From research §User. -->
+## §1 User and job to be done *(framing, keep it short)*
+<!-- Who uses this, what job they are trying to get done here, in what context. From the research. -->
 - **User**:
-- **Job-to-be-done**:
-- **Context** (where in the flow, frequency, urgency):
+- **Job to be done**:
+- **Context** (where in the flow, how often, how urgent):
 
-## §2 · Data model *(precision core)*
-<!-- Every field/entity on the screen. If a field isn't in research/data, ASK — don't assume it exists or its shape. Labels = exact German copy inline. -->
+## §2 Data model *(precision core)*
+<!-- Every field and entity on the screen. If a field is not in the research or the data contract, ASK: do not assume it exists or what shape it has. Labels are the exact UI copy, in the UI language, or the copy key. -->
 
-| Field (DE label) | Type | Optional? | Source / computed | Example value | Tag |
+| Field label (exact copy) | Type | Optional? | Source or computed | Example value | Tag |
 |---|---|---|---|---|---|
-| | | | | | [researched/assumed/open] |
+| | | | | | ✓ ~ ? ⚠ |
 
-## §3 · States *(❤ HEARTPIECE — the state matrix. QA verifies every row was built.)*
-<!-- Enumerate EVERY state the screen can be in. Missing a state = incomplete build = rework. If research doesn't say which states exist, ASK. -->
+## §3 States *(the heart of the spec: QA checks that every row was built)*
+<!-- Every state the screen can be in. A missing state is an incomplete build and means rework. If the research does not say which states exist, ASK. -->
 
-| State | Trigger | What's visible / changes | Components | Copy (DE) | Tag |
+| State | Trigger | What is visible or changes | Components | Copy | Tag |
 |---|---|---|---|---|---|
-| Default / empty | | | | | |
+| Default or empty | | | | | |
 | Loading | | | | | |
 | Filled | | | | | |
 | Partial | | | | | |
 | Error | | | | | |
-| Disabled / read-only | | | | | |
-<!-- Add/remove rows to match the real screen. Each row here becomes a QA check. -->
+| Disabled or read-only | | | | | |
+<!-- Add or remove rows to match the real screen. Each row becomes a QA check. -->
 
-## §4 · Flow *(framing — keep short)*
-<!-- Entry point → steps on this screen → exit/next. What each primary action leads to. -->
+## §4 Flow *(framing, keep it short)*
+<!-- Entry point, steps on this screen, exit. Where each primary action leads. -->
 - **Entry**:
-- **Primary action(s)** → leads to:
-- **Exit / cancel** → leads to:
+- **Primary action**, leads to:
+- **Exit or cancel**, leads to:
 
-## §5 · Business rules + downstream *(precision core)*
-<!-- The logic that's invisible but determines the build: validation, when things disable, defaults, what happens on submit, what this screen affects elsewhere. Almost always from research — if not there, ASK. -->
+## §5 Business rules and downstream effects *(precision core)*
+<!-- The logic that is invisible but decides the build: validation, when things disable, defaults, what happens on submit, what this screen changes elsewhere. Almost always from the research; if it is not there, ASK. -->
 - **Validation**:
-- **Disable / enable conditions**:
-- **Defaults / pre-fills**:
-- **On submit / confirm**:
+- **Disable and enable conditions**:
+- **Defaults and pre-fills**:
+- **On submit or confirm**:
 - **Downstream effects** (what changes elsewhere in the product):
-- Tags: [researched/assumed/open]
+- Tags: ✓ ~ ? ⚠
 
-## §6 · Components *(verify stub — check against design-system/components/inventory.md, do NOT guess)*
-<!-- Map each UI element to a DS component. If published → name + variant/props. If NOT in inventory → mark [local] and it auto-becomes a ds-gap-candidate. -->
+## §6 Components *(quick check against the DS inventory, do not guess)*
+<!-- Map each UI element to a DS component. Published: name plus variant and props. Not in the inventory: mark it [local], and it goes into the DS gap log. -->
 
-| Element | DS component (or [local]) | Variant / props | In inventory? |
+| Element | DS component (or [local]) | Variant and props | In the inventory? |
 |---|---|---|---|
-| | | | ✅ / [local] → ds-gap-candidates.md |
+| | | | ✅ or [local], logged in the gap log |
 
-## §7 · Tokens *(verify stub — only where it matters; check tokens/)*
-<!-- Colours bind to Variables. Spacing binds to spacing variables where the DS publishes them; radius stays raw px on the token scale. Only note non-obvious token choices. -->
+## §7 Tokens *(quick check, only where it matters)*
+<!-- Colours bind to variables. Spacing binds to spacing variables; radius stays raw px on the token scale until the DS publishes radius variables. Only note choices that are not obvious. -->
 - Notable colours:
-- Notable spacing/layout values (on scale 2/4/8/12/16/24/32/40):
+- Notable spacing and layout values (on the scale, e.g. 2, 4, 8, 12, 16, 24, 32, 40):
 
-## §8 · Edge cases *(precision core)*
-<!-- Long names, zero items, max items, permissions, missing data, very-long text. From research where possible; otherwise ASK or mark assumed. -->
+## §8 Edge cases *(precision core)*
+<!-- Long names, zero items, maximum items, permissions, missing data, very long text. From the research where possible; otherwise ASK or mark it assumed. -->
 -
 
-## §9 · Layout & structure *(precision core — the spatial contract)*
-<!-- Regions top→bottom, what's primary vs secondary, alignment, responsive ≥1024px. "Right components, wrong arrangement" is a classic wrong-build — pin it here. -->
-- **Module chrome**: e.g. sidebar + top bar / full-width / detail layout
-- **Regions** (top → bottom):
-- **Hierarchy** (primary / secondary / tertiary):
-- **Responsive** (≥1024px behaviour):
+## §9 Layout and structure *(precision core: the spatial contract)*
+<!-- Regions from top to bottom, primary and secondary, alignment, behaviour at 1024 px and wider. "Right components, wrong arrangement" is the classic wrong build: pin it down here. -->
+- **Work mode and layout** (triage, compare, dossier, secondary; see the module registry):
+- **Module chrome**: e.g. sidebar and top bar, full width, detail layout
+- **Regions** (top to bottom):
+- **Hierarchy** (primary, secondary, tertiary):
+- **Responsive** (1024 px and wider):
 
-## §10 · Open questions — blocks build? *(the honesty gate)*
-<!-- Anything not resolvable from research = listed here. Mark whether it BLOCKS the build or can be a labelled assumption. Resolve or explicitly waive before Phase 2. -->
+## §10 Open questions: does it block the build? *(the honesty gate)*
+<!-- Anything the research cannot answer goes here. Mark whether it BLOCKS the build or can be a labelled assumption. Resolve or explicitly waive it before the build starts. -->
 
-| Question | Blocks build? | Status |
+| Question | Blocks the build? | Status |
 |---|---|---|
-| | yes / no (assumption OK) | open → ask the designer / waived / resolved |
+| | yes, or no (assumption is fine) | open (ask the designer), waived, resolved |
 
 ---
-<!-- Build only after §10's "blocks build?" items are resolved or explicitly waived. The spec is the brief (Phase 2) AND the QA checklist (Phase 3). One file, no drift. -->
+<!-- Build only after every blocking item in §10 is resolved or explicitly waived. The spec is the build prompt AND the QA checklist. One file, no drift. -->
