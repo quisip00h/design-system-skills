@@ -7,7 +7,7 @@ description: Use when a customer's design system and an AI coding agent don't ge
 
 **Design engineer. I ship with Claude Code.**
 
-10+ products shipped. Handover takes a day, and development comes back with two or three questions. 97.8% of new text lands on design-system styles.
+Research to a live MVP in 3 to 4 weeks instead of 3 to 4 months. A first CoachBot in 4 minutes instead of 15. 97.8% of new text on design-system styles.
 
 Live work: [coachbot.ai](https://coachbot.ai) (redesign and build). Client work under NDA, shown live on request.
 
@@ -29,6 +29,9 @@ Enterprise design systems live in Figma; the code follows. I work on both sides:
 Product designer in a programme that replaces a legacy back-office system. My part: discovery, screen specs, prototypes the agent builds on the client's design system (first in Figma, now in code), review rounds with the product owner and domain experts, handover to development, and the list of what the design system is missing for its lead.
 
 - Ran discovery myself: interviews and shadowing with the people doing the work
+- Research to a live MVP in 3 to 4 weeks; the team's previous timeline was 3 to 4 months. Two modules live, everything I handed over is in production
+- Handover takes a day, and development comes back with two or three questions
+- Fields from the task, not from the data model: most proposed fields came from the database, so I cut the screens to what the work needs
 
 **Phase 1: the agent builds in Figma**
 
@@ -50,6 +53,9 @@ Product designer in a programme that replaces a legacy back-office system. My pa
 Product, design and frontend in a small team. I build the studio where organisations set up their AI coaches (editor, setup wizard, knowledge, insights, participants), its motion system and one button and table system for it, and parts of the website (pricing, funnel tracking, `llms.txt`).
 
 - I ship the code: ~226 commits, every one co-written with Claude
+- Redesigned the way in: a first CoachBot in 4 minutes instead of 15
+- Audited every function in the studio: about 210 kept, about 25 cut on purpose, each with a written reason
+- Measure outcomes, not activity: the old completion rate counted silence as success; now it counts coachees who come back for another conversation
 - Brought the studio to WCAG 2.2 AA on primary actions, errors and the flow, and gated go-live on a quality check
 - `DESIGN.md`: design law written for an LLM reader, including a refusal list (no fake progress bars, no confidence percentages, no sparkles)
 - A linter for AI-written UI, with its own self-tests, gating CI. Testing the eval, not just the output. A clean-room version is in this repo: [`skills/ui-lint`](../skills/ui-lint/SKILL.md)
