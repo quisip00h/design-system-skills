@@ -1,4 +1,4 @@
-# Components in <feature>
+# Components in `<feature>`
 
 Every UI component the prototype uses, checked against the component library (the source of truth for components) before a release.
 

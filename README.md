@@ -2,7 +2,19 @@
 
 Skills and process for making coding agents build on a team's **own** design system instead of the average of the internet.
 
+It covers both sides of the work:
+
+- **Figma, through the MCP:** the agent builds natively in the real file with the real library, and a QA skill proves every node is on the system.
+- **Code:** a linter checks agent-written HTML, CSS and JSX against the same tokens.
+
 Extracted from real enterprise work, with every client detail removed. Use it, fork it, steal from it.
+
+## Quickstart
+
+1. Copy the skills into your project: `skills/*` to `.claude/skills/`.
+2. Copy [`templates/CLAUDE.md`](templates/CLAUDE.md) to the project root and fill the placeholders (`<TARGET_FILE>`, `<DS_DIR>`, the role table, the spacing scale). It makes the cycle binding for the agent.
+3. For Figma: point the agent at a screen spec ([`templates/screen-spec.md`](templates/screen-spec.md)) and run **preflight → build → QA**. Preflight checks the library and fonts, build places real instances, QA must report 0 errors on a run that is not suspicious.
+4. For code: put your tokens into `.claude/skills/ui-lint/tokens.json`, then run `node .claude/skills/ui-lint/ui-lint.mjs src/`. Prove the linter first with `node .claude/skills/ui-lint/test/selftest.mjs`.
 
 ## Contents
 
@@ -12,7 +24,7 @@ Extracted from real enterprise work, with every client detail removed. Use it, f
 |---|---|---|
 | [`kristoffer/SKILL.md`](kristoffer/SKILL.md) | The person behind this, written as a skill | you're wondering who built it |
 
-**Skills: the Figma build cycle, in order**
+**Skills: Figma, the build cycle in order**
 
 | | What | Use it when |
 |---|---|---|
@@ -20,6 +32,18 @@ Extracted from real enterprise work, with every client detail removed. Use it, f
 | [`skills/figma-ds-build`](skills/figma-ds-build/SKILL.md) | Library-first instancing by key, colours and spacing bound to variables, text styles with no overrides, `[local]` gap governance | the agent builds or edits a screen in Figma |
 | [`skills/figma-ds-build/HAZARDS.md`](skills/figma-ds-build/HAZARDS.md) | 27 Figma Plugin API hazards that each cost a round, with the fix | something on the canvas does not match the call log |
 | [`skills/figma-ds-qa`](skills/figma-ds-qa/SKILL.md) | Audits an agent-built frame against the design system, including the slot content most traversals miss | your agent says the screen is done |
+
+**Skills: code**
+
+| | What | Use it when |
+|---|---|---|
+| [`skills/ui-lint`](skills/ui-lint/SKILL.md) | Zero-dependency Node linter for HTML, CSS and JSX: raw colours, spacing and type off the scale, `transition: all`, Title Case labels, forbidden words. Ships with fixtures and a self-test | an agent wrote or changed UI code |
+
+**Examples**
+
+| | What | Use it when |
+|---|---|---|
+| [`examples/`](examples/) | A sample QA report, and why the `suspicious` flag exists: 292 instances on the naive pass, 1,162 on the slot-aware one, same 15 frames | you want to see what a result looks like before running anything |
 
 **Templates**
 
@@ -39,7 +63,7 @@ Extracted from real enterprise work, with every client detail removed. Use it, f
 
 ## How the pieces fit
 
-`templates/CLAUDE.md` makes the cycle binding: **preflight → build → QA**, every time, inline, never delegated. Preflight reads the DS cache and the gap log, build reads the module registry before it frames anything, QA proves the result. The screen spec is the prompt; review decisions go back into the spec, never only into a meeting note.
+`templates/CLAUDE.md` makes the cycle binding: **preflight → build → QA**, every time, inline, never delegated. Preflight reads the DS cache and the gap log, build reads the module registry before it frames anything, QA proves the result. In code, `ui-lint` holds agent-written UI to the same tokens, and both checks share one rule: a result of zero on a large input is suspicious until proven otherwise. The screen spec is the prompt; review decisions go back into the spec, never only into a meeting note.
 
 ## The loop behind it
 

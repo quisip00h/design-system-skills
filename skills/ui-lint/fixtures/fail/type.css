@@ -1,0 +1,4 @@
+/* expect: off-scale-font-size 2, off-scale-font-weight 1, transition-all 1 */
+h2 { font-size: 18px; font-weight: 600; }
+.small { font-size: 0.8125rem; font-weight: 400; transition: all 200ms ease; }
+.ok { font-size: 14px; transition: opacity 200ms ease; }

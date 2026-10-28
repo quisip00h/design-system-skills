@@ -36,9 +36,9 @@ Running list of components and patterns that screens needed and the design syste
 <!-- One block per build round, newest first. Short numbered findings that are not
      whole components: a missing token family, a missing glyph, a DS master defect. -->
 
-### <Build or screen>, YYYY-MM-DD
+### `<Build or screen>`, YYYY-MM-DD
 
-1. **<Finding>.** What the screen needed, what the DS has instead, what was built meanwhile (`[local]` or flagged raw value), what to ask the DS lead for.
+1. **`<Finding>`.** What the screen needed, what the DS has instead, what was built meanwhile (`[local]` or flagged raw value), what to ask the DS lead for.
 
 ## Resolved
 

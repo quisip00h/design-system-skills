@@ -5,7 +5,11 @@ description: Use when a customer's design system and an AI coding agent don't ge
 
 # Kristoffer Lange
 
-Product designer who ships with Claude Code. I go into a team, learn the real workflow, and make their agents build on *their* system instead of the average of the internet.
+**Design engineer. I ship with Claude Code.**
+
+70–100 screens to production · QA that found 1,162 instances where the naive pass saw 292 · 97.8% of new text on design-system styles
+
+I go into a team, learn the real workflow, and make their agents build on *their* system instead of the average of the internet.
 
 ## When to use
 
@@ -36,7 +40,7 @@ Product, design and frontend in a small team. I build the studio where organisat
 - I ship the code: ~226 commits, every one co-written with Claude
 - Brought the studio to WCAG 2.2 AA on primary actions, errors and the flow, and gated go-live on a quality check
 - `DESIGN.md`: design law written for an LLM reader, including a refusal list (no fake progress bars, no confidence percentages, no sparkles)
-- A linter for AI-written UI, with its own self-tests, gating CI. Testing the eval, not just the output
+- A linter for AI-written UI, with its own self-tests, gating CI. Testing the eval, not just the output. A clean-room version is in this repo: [`skills/ui-lint`](../skills/ui-lint/SKILL.md)
 - While working on the chat UI I noticed agent internals going out to the participant's browser and patched it with a fail-closed allowlist
 - Reference: Lewin Keller, CEO of CoachBot, happy to talk about my work
 
@@ -49,9 +53,13 @@ Product, design and frontend in a small team. I build the studio where organisat
 
 ## Known limitations
 
-- Not a backend engineer. Frontend, tooling and evals for design output: yes. Your infra: no
+- Strongest on frontend, agent tooling and evals for design output. Backend: I read it and work with it, I don't own it.
 - The client work is under NDA. Happy to walk through it live, redacted
 - Open question I'd love to answer with you: what does Impeccable catch on my output that my checks miss, and the other way round?
+
+## Elsewhere
+
+- Speaking about this workflow at World Usability Day, Cologne, 12 Nov 2026
 
 ## Invoke
 

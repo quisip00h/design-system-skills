@@ -1,0 +1,23 @@
+{
+  "_comment": "Sample figma-ds-qa result with invented data: 15 frames of a detail page set. Node ids are placeholders; real ones are Figma node ids.",
+  "ok": {
+    "libraryInstances": 1162,
+    "boundFills": 2418,
+    "brandText": 3071,
+    "fallbackText": 3,
+    "styledText": 3058
+  },
+  "errors": 5,
+  "warnings": 2,
+  "suspicious": false,
+  "issues": [
+    { "id": "node-0412", "name": "detail-header", "level": "error", "issue": "raw fill, not bound to a variable" },
+    { "id": "node-0977", "name": "Helper text", "level": "error", "issue": "text without a design-system text style: 13px" },
+    { "id": "node-1033", "name": "Total", "level": "error", "issue": "override on Body/Default: 15px Bold" },
+    { "id": "node-1150", "name": "field-row", "level": "error", "issue": "itemSpacing 10px is off the spacing scale" },
+    { "id": "node-1288", "name": "date-pill", "level": "error", "issue": "local instance, not from the library and not marked [local]" },
+    { "id": "node-0518", "name": "divider", "level": "warn", "issue": "raw stroke, not bound" },
+    { "id": "node-0521", "name": "divider", "level": "warn", "issue": "raw stroke, not bound" },
+    { "id": "node-1401", "name": "Mock document title", "level": "info", "issue": "fallback font Inter" }
+  ]
+}

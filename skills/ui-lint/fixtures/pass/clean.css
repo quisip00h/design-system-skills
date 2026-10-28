@@ -1,0 +1,8 @@
+/* expect: none */
+:root { --surface-default: #ffffff; --text-primary: #1e2328; }
+.card { background: var(--surface-default); color: var(--text-primary); padding: 24px 32px; margin: 0 auto; gap: 16px; border: 1px solid var(--border-default); border-radius: 12px; }
+.title { font-size: 20px; font-weight: 700; transition: opacity 200ms ease, transform 200ms ease; }
+.body { font-size: 1rem; line-height: 1.5; padding: calc(var(--space) * 2); }
+@media (max-width: 600px) { .card { padding: 16px; } }
+.link:hover { color: currentColor; }
+.chip::before { content: "#1"; }

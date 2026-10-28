@@ -55,7 +55,7 @@ Run 1 and 2 in parallel, then 3 and 4.
 - `<GAP_LOG>` and `<KEYS_FILE>` `$not-published`: what will have to be a `[local]` gap-filler.
 - `<REGISTRY>`: composed modules that already exist in the project. A module found here is cloned, not rebuilt.
 
-**Reconcile before building.** If the spec names `[local]` components, compare that list with the gap log and the registry. Report mismatches ("spec expects `[local] tabs`, gap log says the DS published tabs on <date>") instead of silently inventing or duplicating a component.
+**Reconcile before building.** If the spec names `[local]` components, compare that list with the gap log and the registry. Report mismatches ("spec expects `[local] tabs`, gap log says the DS published tabs in March") instead of silently inventing or duplicating a component.
 
 ### 2. Confirm the target file and page by reading them
 
@@ -103,9 +103,9 @@ Listed is not loaded. Probe both: a font can appear in the list and still fail t
 A short "ready" summary, then hand off to figma-ds-build:
 
 ```
-Ready: <file> / <page> (read OK, <n> top-level nodes)
-Library: reachable, probe key matches, <n> instantiable components
-Drift: none | <n> components updated after $last-delta (offer delta check) | dead keys: <list>
+Ready: <file> / <page> (read OK, <count> top-level nodes)
+Library: reachable, probe key matches, <count> instantiable components
+Drift: none | <count> components updated after $last-delta (offer delta check) | dead keys: <list>
 Fonts: brand font loads | fallback to <FALLBACK_FONT> (reason)
 Gaps expected for this spec: <[local] list>, mismatches: <list or none>
 ```

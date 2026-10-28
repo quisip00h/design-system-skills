@@ -6,7 +6,7 @@
   understands more reliably than one it was only told.
 -->
 
-# <Workspace name>: guide for the agent
+# `<PROJECT>`: guide for the agent
 
 Read this first in every session.
 
@@ -14,7 +14,7 @@ Read this first in every session.
 
 | Track | Spec (read this) | Figma target | State |
 |---|---|---|---|
-| <track> | `<path/to/spec.md>` | file `<TARGET_FILE>`, page `<TARGET_PAGE>` | <what is built, what is next> |
+| `<track>` | `<path/to/spec.md>` | file `<TARGET_FILE>`, page `<TARGET_PAGE>` | *what is built, what is next* |
 
 - **Design system:** library `<DS_LIBRARY_FILE>`, local cache in `<DS_DIR>/` (keys, inventory, tokens, gap log). Owner: the design-system lead.
 - **Module registry:** `<REGISTRY>`. Read before any build (Standing rule 5).
@@ -32,7 +32,7 @@ The spec is the single source and doubles as the build prompt (`templates/screen
 3. Build natively in Figma through the non-negotiable cycle below.
 4. Report what was built, what deviated and why, what is still open. Update the Open build points block.
 
-**When the spec is thin on a point, ask <the designer>. Never invent.** A field, a state, a rule or a copy line that is not in the spec or the research is a question, not a gap to fill with a plausible guess.
+**When the spec is thin on a point, ask the designer. Never invent.** A field, a state, a rule or a copy line that is not in the spec or the research is a question, not a gap to fill with a plausible guess.
 
 Tag every claim:
 
@@ -75,7 +75,7 @@ The full list with fixes is in `skills/figma-ds-build/HAZARDS.md`. The ones that
 3. Never create top-level nodes on `figma.currentPage`; resolve the page by id.
 4. Resizing a section releases the children it no longer covers. Resize, place, verify.
 5. Prototype links cannot cross pages.
-6. After a DS sync, untouched instances stay on the old version until a human clicks *Update all* in the Assets panel. Remind <the designer>.
+6. After a DS sync, untouched instances stay on the old version until a human clicks *Update all* in the Assets panel. Remind the designer.
 
 ### Missing DS components
 
@@ -96,7 +96,7 @@ Not in UI copy, not in specs, not in dev notes. Use a comma, a colon, a full sto
 
 ### 2. No middle dots as separators
 
-Not in UI copy, not in specs, never in an input field (nobody searches with middle dots). Use commas ("Registered office, Berlin, Active"). One date and time format per language, for example EN `24/07/2026 at 9 AM`, DE `24.07.2026 um 09 Uhr`: <the project's format>.
+Not in UI copy, not in specs, never in an input field (nobody searches with middle dots). Use commas ("Registered office, Berlin, Active"). One date and time format per language, for example EN `24/07/2026 at 9 AM`, DE `24.07.2026 um 09 Uhr`. *Fill in the project's format.*
 
 ### 3. A technical spec is never only a data spec
 
@@ -169,13 +169,13 @@ Applies to Figma frames and HTML prototypes alike. A change is not done until th
 
 Every text uses a published DS text style, unchanged. No custom size, weight or line height, no override on top of a style, no styles from another scale. Exempt: annotations, canvas captions, mock documents.
 
-<Role table: which style for page title, card title, field label, field value, table cell, helper text, figures. Example in `skills/figma-ds-build/SKILL.md`, Rule 4.>
+*Fill in the role table: which style for page title, card title, field label, field value, table cell, helper text, figures. Example in `skills/figma-ds-build/SKILL.md`, Rule 4.*
 
 - Sizes outside the scale do not exist. Map to the nearest role; if none fits, ask.
 - A bold variant of a regular style is a different style, never an override.
 - Text inside DS component internals belongs to the DS: report it, do not restyle it.
-- **Spacing is a DS variable too.** Every gap and padding binds to a spacing variable: <scale, e.g. 2, 4, 8, 12, 16, 24, 32, 40, 48, 64>. Fixed rhythm: <label to value 4, field rows 16, field columns 24, card padding 32, page sections 32>.
-- **DS rulings from review:** <form labels, icon tokens, field grids as rows, titles as headings, toast placement; list the project's versions here>.
+- **Spacing is a DS variable too.** Every gap and padding binds to a spacing variable. *Fill in the scale, e.g. 2, 4, 8, 12, 16, 24, 32, 40, 48, 64, and the fixed rhythm, e.g. label to value 4, field rows 16, field columns 24, card padding 32, page sections 32.*
+- **DS rulings from review:** *fill in the project's versions: form labels, icon tokens, field grids as rows, titles as headings, toast placement.*
 
 **Why:** an audit found about 1,880 of 3,250 texts in one handover file and about 3,900 of 4,760 on one master page without a DS style, plus 11 and 13 px labels the DS does not have. Both files used the same library, so the drift came from the build, not the DS. The same audit found 219 of about 3,400 gaps and paddings bound to a variable. After this rule and the matching QA checks: 97.8 % of new text on DS styles, 92.6 % of spacing on the scale.
 
@@ -183,15 +183,15 @@ Every text uses a published DS text style, unchanged. No custom size, weight or 
 
 - `<DS_DIR>/` is a read source, edited only when the DS lead publishes.
 - Only status is colour-coded. Origin, provenance and type chips are neutral.
-- <Language governance: which language for UI chrome, specs, domain prose, data.>
-- <Scope: prototype, not production. No production error handling, no real APIs.>
+- *Language governance: which language for UI chrome, specs, domain prose, data.*
+- *Scope: prototype, not production. No production error handling, no real APIs.*
 
 ## Quick commands
 
 | When the user says | Do this |
 |---|---|
 | "work the open build points" | read the spec in *Active work*, work its Open build points in order |
-| "build <screen>" | spec → preflight → build → QA |
+| "build `<screen>`" | spec → preflight → build → QA |
 | "is this on-system?" | figma-ds-qa on the frame |
 | "does a module for X exist?" | registry decision guide: DS key → registry clone → new `[local]` → domain-only |
 | "what's the token for X?" | `<DS_DIR>/tokens/` first |

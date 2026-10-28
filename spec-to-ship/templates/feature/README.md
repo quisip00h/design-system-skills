@@ -1,4 +1,4 @@
-# <feature>
+# `<feature>`
 
 One folder per feature. `tools/library.py update <feature>` publishes it to the library's current.
 

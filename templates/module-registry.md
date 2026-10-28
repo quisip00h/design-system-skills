@@ -39,7 +39,7 @@ Rule of thumb: **if a second domain could need it, it is registry material.** Do
 
 ## 3. Modules
 
-Origin legend: **DS** = published component. **<domain>** = domain build where the canonical instance lives. **[local]** = local component, promotion status in section 6.
+Origin legend: **DS** = published component. **`<domain>`** = domain build where the canonical instance lives. **[local]** = local component, promotion status in section 6.
 
 Column guide: *Canonical source* is a node link or DS key, never a description. *Reuse rule* says how to use it correctly. *Pitfalls* is what went wrong last time.
 
