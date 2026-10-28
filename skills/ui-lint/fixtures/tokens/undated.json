@@ -1,0 +1,6 @@
+{
+  "$comment": "Fixture: a token file with no source date. The report must say the age is unknown, not guess it.",
+  "colour": { "text/primary": "#1e2328" },
+  "spacing": [0, 4, 8, 16],
+  "type": { "sizes": [14, 16], "weights": [400, 700] }
+}

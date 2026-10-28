@@ -32,6 +32,7 @@ Every file in `fixtures/fail` declares what it must find (`expect: raw-colour 2,
 
 | Key | What it is |
 |---|---|
+| `$source` | where the tokens came from and when: `{ "from": "Figma variables export", "exported": "2026-10-20" }`. The report prints the age |
 | `colour` | token name to hex. Used to suggest the token when a raw value matches one: `#1e2328` suggests `var(--text-primary)` |
 | `spacing` | the spacing scale in px, `0` included |
 | `type.sizes`, `type.weights` | the type scale; `type.rootPx` converts `rem` |
@@ -40,8 +41,9 @@ Every file in `fixtures/fail` declares what it must find (`expect: raw-colour 2,
 | `lint.levels` | per rule `error`, `warn` or `off` |
 | `lint.ignore` | globs to skip, e.g. the file that defines the tokens |
 | `lint.suspicious.minLines` | input size above which zero findings is reported as suspicious |
+| `lint.maxTokenAgeDays` | age in days after which the report calls the tokens stale, 30 by default |
 
-Replace the sample values with the design system's. Generate the file from the token source if there is one; a hand-copied scale drifts.
+Replace the sample values with the design system's. Generate the file from the token source if there is one, and set `$source.exported` when you do; a hand-copied scale drifts, and an old export drifts too.
 
 ## Rules
 
@@ -64,15 +66,17 @@ Title Case is a warning because it cannot tell a proper noun from a capitalised 
 ## Read the report
 
 ```
-ui-lint: 7 files, 63 lines, 60 values and labels checked
+ui-lint: 8 files, 78 lines, 74 values and labels checked
+  tokens: tokens.json, from Figma variables export, exported 2026-10-20, 8 days old
   fixtures/fail/page.html:6:11      error  off-scale-spacing      20px  20px is off the spacing scale (try 16px)
   fixtures/fail/page.html:10:3      warn   title-case             Welcome To Your Dashboard  Title Case in a label, use sentence case (try Welcome to your dashboard)
-25 errors, 8 warnings. FAIL
+25 errors, 9 warnings. FAIL
 ```
 
 - **PASS** = 0 errors **and** not suspicious. Warnings are acceptable.
 - **FAIL** = at least one error. Each line gives location, rule, the value it saw, and a suggestion where one exists (nearest scale step, matching token, sentence-case version).
 - **SUSPICIOUS** = the run probably did not see the code. Never report PASS on a suspicious run.
+- **tokens** = where the token file came from and how old it is, read from its `$source`. Past `lint.maxTokenAgeDays` (30 by default) the line says *stale*: re-export before you trust a finding, because a snapshot that lags the design system flags correct code as wrong. A file with no `$source.exported` says *source date unknown* instead of guessing. The age does not change the exit code; it tells you how much to trust the rest of the report.
 
 ## A count of 0 is a bug signal, not a pass
 

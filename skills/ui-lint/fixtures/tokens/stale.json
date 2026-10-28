@@ -1,0 +1,8 @@
+{
+  "$comment": "Fixture: a token snapshot exported long before the run. The report must say how old it is and that it is stale.",
+  "$source": { "from": "Figma variables export", "exported": "2026-01-15" },
+  "colour": { "text/primary": "#1e2328" },
+  "spacing": [0, 4, 8, 16],
+  "type": { "sizes": [14, 16], "weights": [400, 700] },
+  "lint": { "maxTokenAgeDays": 30 }
+}

@@ -6,7 +6,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { lint, loadConfig, isTitleCase } from "../ui-lint.mjs";
+import { lint, loadConfig, isTitleCase, format } from "../ui-lint.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const cfg = loadConfig(join(root, "tokens.json"));
@@ -68,6 +68,21 @@ for (const f of readdirSync(join(root, "fixtures", "pass")).sort()) {
   check(!lint([page, read("pass", "fonts.css")], cfg).counts["no-declared-size"], "a size set in another file's CSS covers it");
   const d = lint([read("fail", "definitions.css")], cfg).findings.find(x => x.value === "--muted: #5b636b");
   check(d && d.suggest === "var(--text-secondary)", "an off-token definition suggests the nearest token");
+}
+
+// The report says how old the tokens are: a stale snapshot produces confident, wrong findings.
+{
+  const now = Date.parse("2026-10-28");
+  const page = [{ path: "page.css", text: ".x { color: #1e2328; }" }];
+  const stale = loadConfig(join(root, "fixtures", "tokens", "stale.json"));
+  const s = lint(page, { ...stale, now });
+  check(s.tokens?.days === 286 && s.tokens.exported === "2026-01-15" && s.tokens.stale, "a token file exported 286 days ago is reported as stale");
+  check(/exported 2026-01-15, 286 days old/.test(format(s)) && /, stale: re-export/.test(format(s)), "the report prints the export date, the age and the stale note");
+  const fresh = lint(page, { ...stale, now: Date.parse("2026-01-20") });
+  check(fresh.tokens?.days === 5 && !fresh.tokens.stale && !/, stale: re-export/.test(format(fresh)), "a recent export is not stale");
+  const undated = lint(page, { ...loadConfig(join(root, "fixtures", "tokens", "undated.json")), now });
+  check(undated.tokens?.days === null && /source date unknown/.test(format(undated)), "a token file with no source date says so instead of guessing");
+  check(cfg.source.exported, "the sample tokens carry their source date");
 }
 
 check(isTitleCase("Save Changes") && !isTitleCase("Save changes") && !isTitleCase("Export PDF") && !isTitleCase("Open in Figma", cfg.allow),

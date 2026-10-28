@@ -80,9 +80,11 @@ Short loops, plain messages, a working thing over a plan about one. When somethi
 ## I tried Impeccable on my own work
 
 I ran it next to my ui-lint on three client prototypes, twice, desktop only, so mobile findings are left out. The first run had no project context: Impeccable caught the accessibility and flow problems my checks have no rules for, ui-lint the token drift.
-For the second run I set Impeccable up the way its docs describe, with `init` and `document`, and gave it the client's design system and UX rules. That changed a lot. It judged the screens against the team's own rules and found what my linter can't see, because it is about meaning, not values: a semantic token mapped to the wrong palette step, a valid size used in the wrong role, local stand-ins for components the system already has.
+For the second run I set Impeccable up the way its docs describe, with `init` and `document`, and gave it the client's design system and UX rules. That changed a lot. It judged the screens against the team's own rules and found what my linter can't see, because it is about meaning, not values: a valid size used in the wrong role, local stand-ins for components the system already has, one status shown in two colours.
 ui-lint still covers every off-scale value at every location, spacing included, and runs the same way every time in CI. Four gaps the first run showed are now rules with fixtures; the second run found a hole in one of them, now fixed with its own fixture.
 So I'd use both: Impeccable as the review that knows the product, ui-lint as the gate that keeps the tokens honest.
+
+One finding taught me something else. It flagged a token on the wrong palette step; checking against Figma showed the prototype was right and my token snapshot was stale. A review is only as good as the source it checks against, so the tokens now come straight from Figma and every lint report prints their age.
 
 ## What I'd bring back to Impeccable
 
@@ -90,6 +92,7 @@ So I'd use both: Impeccable as the review that knows the product, ui-lint as the
 - Enterprise teams need the agent to respect *their* tokens and components, not general taste alone
 - A design review must see slot and nested content, or it passes what it never saw
 - The reviewer needs its own tests: a clean result on a big input is a bug signal
+- Design-system context goes stale. A review should know how old its source is, or it reports confident findings against yesterday's system
 
 ## Known limitations
 

@@ -38,6 +38,7 @@ const blank = s => s.replace(/[^\n]/g, " ");
 export function loadConfig(path) {
   const t = JSON.parse(readFileSync(path, "utf-8"));
   const lint = t.lint || {};
+  const src = t.$source || {};
   const colours = new Map();
   for (const [name, value] of Object.entries(t.colour || {})) colours.set(normHex(value), name);
   return {
@@ -51,7 +52,17 @@ export function loadConfig(path) {
     levels: { ...LEVELS, ...(lint.levels || {}) },
     ignore: (lint.ignore || []).map(globToRegex),
     minLines: (lint.suspicious && lint.suspicious.minLines) || 300,
+    source: { path, from: src.from, exported: src.exported },
+    maxTokenAgeDays: lint.maxTokenAgeDays || 30,
   };
+}
+
+// How old the token snapshot is. A stale one makes the linter confidently wrong, so the report says so.
+export function tokenAge(cfg, now = Date.now()) {
+  const { path, from, exported } = cfg.source || {};
+  const at = Date.parse(exported);
+  const days = Number.isNaN(at) ? null : Math.floor((now - at) / 86400000);
+  return { path, from: from || null, exported: days === null ? null : exported, days, maxDays: cfg.maxTokenAgeDays, stale: days !== null && days > cfg.maxTokenAgeDays };
 }
 
 function globToRegex(g) {
@@ -343,7 +354,7 @@ export function lint(sources, cfg) {
     reasons.push(`${lines} lines and nothing found. A clean result this large is more often a blind linter than clean code: plant one raw colour and re-run, or run the self-test`);
   if (sources.length && lines >= 50 && total === 0) reasons.push("nothing checkable was found: the parser may not understand this code");
   return {
-    files: sources.length, lines, checked,
+    files: sources.length, lines, checked, tokens: tokenAge(cfg, cfg.now),
     errors: findings.filter(f => f.level === "error").length,
     warnings: findings.filter(f => f.level === "warn").length,
     counts, suspicious: reasons.length > 0, suspiciousReasons: reasons, findings,
@@ -375,6 +386,14 @@ function sentenceCase(label, allow) {
 // ---------------------------------------------------------------- report
 export function format(r) {
   const out = [`ui-lint: ${r.files} files, ${r.lines} lines, ${Object.values(r.checked).reduce((a, b) => a + b, 0)} values and labels checked`];
+  const t = r.tokens;
+  if (t) {
+    const name = t.path ? relative(process.cwd(), t.path) : "tokens";
+    out.push(t.days === null
+      ? `  tokens: ${name}, source date unknown. Add "$source": { "from": "...", "exported": "YYYY-MM-DD" } so the report can say how old they are`
+      : `  tokens: ${name}${t.from ? `, from ${t.from}` : ""}, exported ${t.exported}, ${t.days} days old` +
+        (t.stale ? `. Older than ${t.maxDays} days, stale: re-export before trusting a finding` : ""));
+  }
   for (const f of r.findings) {
     out.push(`  ${`${f.file}:${f.line}:${f.col}`.padEnd(32)}  ${f.level.padEnd(5)}  ${f.rule.padEnd(21)}  ${f.value}  ${f.message}${f.suggest ? ` (try ${f.suggest})` : ""}`);
   }
