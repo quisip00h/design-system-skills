@@ -7,13 +7,11 @@ description: Use when a customer's design system and an AI coding agent don't ge
 
 **Design engineer. I ship with Claude Code.**
 
-70–100 screens to production · handover in a day, 2–3 questions back from dev · 97.8% of new text on design-system styles
+100+ screens to production · handover in a day, 2–3 questions back from dev · 97.8% of new text on design-system styles
 
 Live work: [coachbot.ai](https://coachbot.ai) (redesign and build). Client work under NDA, shown live on request.
 
 I go into a team, learn the real workflow, and make their agents build on *their* system instead of the average of the internet.
-
-Freelance, so I think like someone who owns the outcome, not a ticket. Agency-trained, so I'm fast: build it, show it, ship it. No corporate theatre, no decks about decks.
 
 ## When to use
 
@@ -28,16 +26,25 @@ Enterprise design systems live in Figma; the code follows. I work on both sides:
 
 ### Enterprise back office (client under NDA)
 
-Product designer in a programme that replaces a legacy back-office system. My part: discovery, screen specs, Figma prototypes the agent builds on the client's design system, review rounds with the product owner and domain experts, handover to development, and the list of what the design system is missing for its lead.
+Product designer in a programme that replaces a legacy back-office system. My part: discovery, screen specs, prototypes the agent builds on the client's design system (first in Figma, now in code), review rounds with the product owner and domain experts, handover to development, and the list of what the design system is missing for its lead.
 
 - Ran discovery myself: interviews and shadowing with the people doing the work
+- 100+ screens to production across both phases below. Handover takes a day, 2–3 questions come back from dev
+
+**Phase 1: the agent builds in Figma**
+
 - Built three Claude Code skills: [preflight](../skills/figma-ds-preflight/SKILL.md) → [build](../skills/figma-ds-build/SKILL.md) → [QA](../skills/figma-ds-qa/SKILL.md). The agent builds natively in Figma via MCP, with the customer's real library components, not lookalikes. What broke along the way: [`HAZARDS.md`](../skills/figma-ds-build/HAZARDS.md)
 - Made the cycle non-negotiable in the agent's instructions, with seven standing rules and the failure behind each: [`templates/CLAUDE.md`](../templates/CLAUDE.md)
-- 70–100 screens to production. Handover takes a day, 2–3 questions come back from dev
 - My first QA skill reported 292 instances, all clean. It was blind to slot content. Real number: 1,162. Rule since then: *a count of 0 is a bug signal, not a pass*
 - Every screen had drifted into card stacks. Nobody chose that; the toolchain did. Now layout follows the work mode (triage, compare, dossier), and a module registry sits between the DS and the domain specs: [`templates/module-registry.md`](../templates/module-registry.md)
 - New output: 97.8% of text on design-system styles, 92.6% of spacing on scale
-- Handover runs on the blueprint in [`spec-to-ship`](../spec-to-ship/)
+
+**Phase 2: Figma keeps the design system, the screens move to code (running now)**
+
+- Figma holds the design system and nothing else. Screens are coded prototypes at a versioned URL; the spec and the link sit in the wiki
+- Why: faster, testing instead of long builds, evidence sooner, and no break between prototype and frontend. Developers get something to click, not a drawing to translate
+- The product owner freezes a release as *Ready to build*. Tickets point to that frozen release, never to the one that keeps moving. Handover is a link and a spec, not a handover meeting
+- The blueprint, with the library and the CLI that guards releases: [`spec-to-ship`](../spec-to-ship/)
 
 ### CoachBot (AI coaching platform)
 
@@ -52,7 +59,7 @@ Product, design and frontend in a small team. I build the studio where organisat
 
 ## Where I come from
 
-- UX research and service design, in agencies, for Toyota, Samsung, Siemens and Fjällräven. That's where the habit comes from: find out how the work really happens before designing anything
+- UX research and service design, in agencies and as a freelancer, for Siemens, Allianz, Fjällräven and Samsung, plus user research for Toyota. That's where the habit comes from: find out how the work really happens before designing anything
 - Agency pace: real deadlines, real clients, the work gets shown, not described
 - Then I went freelance and started building what I design. Discovery, spec, prototype and code from one person means nothing gets lost between them
 
@@ -65,10 +72,13 @@ Product, design and frontend in a small team. I build the studio where organisat
 
 Short loops, plain messages, a working thing over a plan about one. When something is wrong I say so early, and I say what it costs to fix.
 
+## I tried Impeccable on my own work
+
+I ran it next to my ui-lint on three client prototypes (desktop-only, so mobile findings left out). Impeccable caught the accessibility and flow problems my checks have no rules for, ui-lint the token drift (191 off-scale values). Four things ui-lint missed in that run are now rules with their own fixtures. Fair caveat: Impeccable ran without a DESIGN.md, so it never saw the tokens. Neither checks whether a component is the design system's own.
+
 ## What I'd bring back to Impeccable
 
 - Enterprise teams need the agent to respect *their* tokens and components, not general taste alone
-- Tried it next to my ui-lint on three client prototypes (desktop-only, so mobile findings left out). Impeccable caught the accessibility and flow problems my checks have no rules for, ui-lint the token drift (191 off-scale values). Four things ui-lint missed in that run are now rules with their own fixtures. Fair caveat: Impeccable ran without a DESIGN.md, so it never saw the tokens. Neither checks whether a component is the design system's own
 - A design review must see slot and nested content, or it passes what it never saw
 - The reviewer needs its own tests: a clean result on a big input is a bug signal
 

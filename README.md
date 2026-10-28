@@ -67,6 +67,8 @@ Extracted from real enterprise work, with every client detail removed. Use it, f
 
 `templates/CLAUDE.md` makes the cycle binding: **preflight → build → QA**, every time, inline, never delegated. Preflight reads the DS cache and the gap log, build reads the module registry before it frames anything, QA proves the result. In code, `ui-lint` holds agent-written UI to the same tokens, and both checks share one rule: a result of zero on a large input is suspicious until proven otherwise. The screen spec is the prompt; review decisions go back into the spec, never only into a meeting note.
 
+Figma or code is a choice per team, and the rules are the same in both. Where screens are built in Figma, the three Figma skills run. Where the screens move to code, Figma keeps only the design system, the prototype lives at a URL, and `spec-to-ship` takes over: the product owner freezes a release, tickets point to it, development builds from the spec. `ui-lint` checks that code against the same tokens.
+
 ## The loop behind it
 
 1. **Spec is the prompt.** One page, every state listed, every claim tagged researched, assumed or open. When the spec is thin, ask. Never invent.
