@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototype library</title>
+<style>
+/* Design system tokens, values from the design tool variables; replace them with your library tokens */
+:root{
+--bg:#ffffff;--bg-2:#f8f8f8;--bg-3:#f2f3f3;--bg-hover:#e8eaeb;
+--text:#2b373d;--text-2:#3b484e;--label:#606c72;--placeholder:#869096;
+--border-1:#a8b1b5;--border-2:#e8eaeb;
+--brand:#111827;--brand-hover:#374151;--brand-weak:#e5e7eb;--brand-text:#ffffff;--focus:#2563eb;
+--active-weak:#d5efff;--active-border:#a0c3ed;--active-text:#1e40af;
+--r-8:8px;--r-12:12px;--r-16:16px;
+--shadow-sm:0 1px 2px 0 rgba(0,0,0,.05);
+color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg-2);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:20px}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.ic{width:16px;height:16px;flex:none}
+
+.hdr{background:var(--bg);border-bottom:1px solid var(--border-2)}
+.hdr .in{max-width:1040px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;gap:12px}
+.mark{width:28px;height:28px;border-radius:var(--r-8);background:var(--brand);display:flex;align-items:center;justify-content:center;color:var(--brand-text)}
+.hdr b{font-size:16px;line-height:24px}
+.hdr span{color:var(--label)}
+
+main{max-width:1040px;margin:0 auto;padding:32px 24px 64px}
+h1{font-size:32px;line-height:40px;font-weight:700;margin:0 0 8px}
+.lead{color:var(--label);margin:0 0 24px;max-width:640px}
+
+.tools{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:32px}
+.search{display:flex;align-items:center;gap:8px;height:40px;padding:0 12px;border:1px solid var(--border-1);border-radius:var(--r-8);background:var(--bg);flex:1 1 260px;max-width:360px;color:var(--label)}
+.search input{border:0;outline:0;font:inherit;color:var(--text);flex:1;min-width:0;background:none}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{height:36px;padding:0 14px;border:1px solid var(--border-1);border-radius:999px;background:var(--bg);font:inherit;font-weight:700;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:6px}
+.chip small{font-weight:400;color:var(--label);font-size:14px}
+.chip[aria-pressed="true"]{background:var(--text);border-color:var(--text);color:#fff}
+.chip[aria-pressed="true"] small{color:#d9dddf}
+
+.group{margin-bottom:40px}
+.group-h{display:flex;align-items:baseline;gap:8px;margin:0 0 16px}
+.group-h h2{font-size:20px;line-height:28px;margin:0}
+.group-h span{color:var(--label)}
+
+.card{background:var(--bg);border:1px solid var(--border-2);border-radius:var(--r-16);box-shadow:var(--shadow-sm);padding:24px 32px;margin-bottom:16px}
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.ver{font-size:24px;line-height:32px;font-weight:700}
+.meta{color:var(--label);margin-left:auto}
+.badge{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px;border-radius:6px;font-size:12px;line-height:16px;font-weight:700;border:1px solid transparent;white-space:nowrap}
+.b-draft{background:var(--bg-3);color:var(--label);border-color:var(--border-2)}
+.b-ready{background:var(--brand-weak);color:var(--brand-text);border-color:var(--brand-hover)}
+.b-built{background:var(--active-weak);color:var(--active-text);border-color:var(--active-border)}
+.b-replaced{background:var(--bg);color:var(--placeholder);border-color:var(--border-2)}
+.card h3{font-size:16px;line-height:24px;margin:12px 0 4px}
+.sum{color:var(--text-2);margin:0 0 16px;max-width:720px}
+
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-bottom:20px}
+.k{display:block;font-size:12px;line-height:16px;color:var(--label);margin-bottom:8px}
+.parts{display:flex;flex-wrap:wrap;gap:8px}
+.part{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:var(--r-8);border:1px solid var(--border-2);background:var(--bg-2);color:var(--text-2)}
+.part.missing{color:var(--placeholder);background:var(--bg)}
+.part.draft{border-style:dashed}
+.part .st{font-size:12px;color:var(--label)}
+.log{margin:0;padding:0;list-style:none}
+.log li{position:relative;padding-left:16px;margin-bottom:4px}
+.log li::before{content:"";position:absolute;left:4px;top:8px;width:4px;height:4px;border-radius:2px;background:var(--border-1)}
+
+.acts{display:flex;flex-wrap:wrap;gap:8px;padding-top:16px;border-top:1px solid var(--border-2)}
+.btn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:var(--r-8);border:1px solid var(--border-1);background:var(--bg);font:inherit;font-weight:700;text-decoration:none;color:var(--text);cursor:pointer}
+.btn:hover{background:var(--bg-hover)}
+.btn.pri{background:var(--brand);border-color:var(--brand);color:var(--brand-text)}
+.btn.pri:hover{background:var(--brand-hover);border-color:var(--brand-hover)}
+.btn[aria-disabled="true"]{color:var(--placeholder);border-color:var(--border-2);cursor:default;background:var(--bg)}
+
+.more{display:inline-block;margin-top:4px;color:var(--label)}
+.log.compact li{display:flex;align-items:baseline;gap:8px;padding-left:0;margin-bottom:6px}
+.log.compact li::before{display:none}
+.log.compact .ld{flex:none;width:40px;color:var(--label);font-size:12px}
+.log.compact .lt{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rels{padding:20px 32px}
+.rels .k{margin-bottom:12px}
+.rel{display:grid;grid-template-columns:168px 120px minmax(0,1fr) auto;align-items:center;column-gap:12px;padding:12px 0;border-top:1px solid var(--border-2)}
+.rel .ra{display:flex;gap:8px;justify-content:flex-end}
+.rel:first-of-type{border-top:0}
+.rv{font-weight:700}
+.rm{color:var(--label)}
+.rel.quiet .rv{font-weight:400;color:var(--label)}
+.btn.sm{height:32px;padding:0 12px}
+.sp{flex:1}
+/* Ready to build dialog */
+.btn.end{margin-left:auto}
+.scrim{position:fixed;inset:0;background:rgba(43,55,61,.4);z-index:40}
+.dlg{position:fixed;z-index:41;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;background:var(--bg);border-radius:var(--r-16);box-shadow:0 12px 40px rgba(28,40,46,.16);padding:24px}
+.dlg h2{font-size:20px;line-height:28px;margin:0}
+.dlg .dsub{color:var(--label);margin:0 0 20px}
+.dlg .sec{margin-bottom:20px}
+.dlg .chk{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:6px 16px}
+.dlg .chk li{display:flex;align-items:center;gap:8px}
+.dlg .chk .no{color:var(--label)}
+.dlg .chk .ib{display:inline-flex;width:16px;height:16px;flex:none;align-items:center;justify-content:center}
+.dlg .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.dlg label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;line-height:16px;color:var(--label)}
+.dlg input[type=text]{height:40px;padding:0 12px;border:1px solid var(--border-1);border-radius:var(--r-8);font:inherit;font-size:14px;color:var(--text);background:var(--bg)}
+.dlg input[aria-invalid=true]{border-color:#f76392}
+.dlg .err{color:#9d1133;font-size:12px;line-height:16px;min-height:16px}
+.dlg .cb{display:flex;gap:8px;align-items:flex-start;margin-bottom:16px;max-width:70ch}
+.dlg .cb input{margin:2px 0 0;width:16px;height:16px;flex:none;accent-color:#2b373d}
+.dlg .why{color:var(--label);font-size:12px;line-height:16px;margin:0 auto 0 0;max-width:36ch}
+.dlg .foot{display:flex;align-items:center;gap:8px;padding-top:16px;border-top:1px solid var(--border-2)}
+.dlg .cmd{width:100%;height:40px;padding:0 12px;border:1px solid var(--border-2);border-radius:var(--r-8);background:var(--bg-3);font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--text)}
+.dlg .ok{display:flex;gap:8px;align-items:flex-start;background:var(--brand-weak);color:var(--brand-text);border-radius:var(--r-8);padding:12px 16px;margin-bottom:12px;max-width:70ch}
+.empty{text-align:center;padding:48px 24px;color:var(--label)}
+.empty b{display:block;color:var(--text);font-size:16px;line-height:24px;margin-bottom:4px}
+.empty code{background:var(--bg-3);padding:2px 6px;border-radius:4px}
+footer{color:var(--label);border-top:1px solid var(--border-2);padding-top:16px;margin-top:8px}
+
+@media (max-width:720px){
+ .hdr .in{padding:12px 16px}
+ main{padding:24px 16px 48px}
+ h1{font-size:24px;line-height:32px}
+ .card{padding:20px 16px}
+ .cols{grid-template-columns:1fr}
+ .meta{margin-left:0;width:100%}
+ .search{max-width:none}
+ .rels{padding:16px}
+ .rel{grid-template-columns:1fr auto;row-gap:8px}
+ .rel .rm{grid-column:1 / -1}
+}
+</style>
+</head>
+<body>
+<header class="hdr"><div class="in">
+ <span class="mark" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5l-9 5l-9 -5z"/><path d="M3 13l9 5l9 -5"/></svg></span>
+ <b>spec-to-ship</b><span>Prototype library</span>
+</div></header>
+
+<main>
+ <h1>Prototype library</h1>
+ <p class="lead">One living prototype per feature, with its spec, copy, field mapping and changelog. A release is frozen when the product owner marks the current state Ready to build; stories always point to a release.</p>
+
+ <div class="tools">
+  <label class="search"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/><path d="M21 21l-6 -6"/></svg><input id="q" type="search" placeholder="Feature, release or change" aria-label="Search the library"></label>
+ </div>
+
+ <div id="list" aria-live="polite"></div>
+
+ <footer>Small changes go into current and get one changelog line. Ready to build is set by the product owner; the release is then frozen and never edited.</footer>
+</main>
+
+<div id="dlg"></div>
+<script src="versions.js"></script>
+<script>
+const PART_LABEL={prototype:"Click-dummy",spec:"Spec",copy:"Copy EN/DE",fields:"Field mapping",changelog:"Changelog"};
+const BADGE={"Draft":"b-draft","Ready to build":"b-ready","Built":"b-built","Replaced":"b-replaced"};
+const CHECK='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5l10 -10"/></svg>';
+const ARROW='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 7l-10 10"/><path d="M8 7l9 0l0 9"/></svg>';
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const date=iso=>{const [y,m,d]=String(iso||"").split("-");return d?`${d}.${m}.${y}`:esc(iso)};
+const SHOW=3;
+let DATA=null;
+
+function partHTML(k,v){const s=v||"missing";const cls=s==="done"?"":s==="missing"?"missing":"draft";
+ return `<span class="part ${cls}">${s==="done"?CHECK:""}${PART_LABEL[k]}${s!=="done"?`<span class="st">${esc(s)}</span>`:""}</span>`}
+const specLinks=l=>(l.specs||[]).map(s=>`<a class="btn" href="${esc(s.href)}">Spec ${esc(s.label)}</a>`).join("");
+
+function currentCard(f){
+ const c=f.current,l=c.links||{},un=c.unreleased||[];
+ const line=x=>{const m=/^(\d\d\.\d\d)\.\d{4}: (.*)$/.exec(x)||[null,"",x];return `<li title="${esc(x)}"><span class="ld">${esc(m[1])}</span><span class="lt">${esc(m[2])}</span></li>`};
+ const log=un.length?`<ul class="log compact">${un.slice(0,SHOW).map(line).join("")}</ul>${un.length>SHOW?`<a class="more" href="${esc(f.changelog)}">${un.length-SHOW} more in the changelog</a>`:""}`:`<p class="sum" style="margin:0">No changes since ${esc(c.basedOn||"the last release")}.</p>`;
+ return `<article class="card">
+  <div class="top"><span class="ver">Current</span><span class="badge ${BADGE[c.status]||"b-draft"}">${esc(c.status)}</span><span class="meta">Updated ${date(c.updated)}, ${esc(f.owner||"")}${c.basedOn?`, based on ${esc(c.basedOn)}`:""}</span></div>
+  <h3>${esc(f.title)}</h3>
+  <p class="sum">${esc(f.summary)}</p>
+  <div class="cols">
+   <div><span class="k">Parts for Ready to build</span><div class="parts">${Object.keys(PART_LABEL).map(k=>partHTML(k,(c.parts||{})[k])).join("")}</div></div>
+   <div><span class="k">Changes since ${esc(c.basedOn||"the baseline")} (${un.length})</span>${log}</div>
+  </div>
+  <div class="acts"><a class="btn pri" href="view.html?v=${esc(f.id)}/current">Open current ${ARROW}</a>${specLinks(l)}${l.context?`<a class="btn" href="${esc(l.context)}">Context</a>`:""}${l.copy?`<a class="btn" href="${esc(l.copy)}">Copy</a>`:""}<a class="btn" href="${esc(f.changelog)}">Changelog</a><button class="btn end" type="button" data-ready="${esc(f.id)}">Mark Ready to build…</button></div>
+ </article>`}
+
+function releases(f){
+ const rows=(f.releases||[]).map(r=>`<div class="rel"><span class="rv">${esc(r.version)}</span><span class="badge ${BADGE[r.status]||"b-draft"}">${esc(r.status)}</span><span class="rm">${date(r.date)}, set by ${esc(r.by||"")}${r.story?`, ${esc(r.story)}`:""}, ${(r.changes||[]).length} ${(r.changes||[]).length===1?"change":"changes"}</span><span class="ra"><a class="btn sm" href="view.html?v=${esc(f.id+"/"+r.version)}">Open</a>${(r.links.specs||[]).map(s=>`<a class="btn sm" href="${esc(s.href)}">${esc(s.label)}</a>`).join("")}</span></div>`).join("");
+ const base=(f.baselines||[]).map(b=>`<div class="rel quiet"><span class="rv">${esc(b.label)}</span><span></span><span class="rm">${esc(b.note||"")}</span><span class="ra"><a class="btn sm" href="view.html?v=${esc(f.id+"/"+b.id)}">Open</a></span></div>`).join("");
+ return `<div class="card rels"><span class="k">Releases</span>${rows||`<p class="sum" style="margin:0 0 4px">No release yet. When the product owner marks current Ready to build, a frozen copy appears here and stories point to it.</p>`}${base}</div>`}
+
+function render(){
+ const list=document.getElementById("list");if(!DATA)return;
+ const q=document.getElementById("q").value.trim().toLowerCase();
+ const vis=(DATA.features||[]).filter(f=>!q||JSON.stringify(f).toLowerCase().includes(q));
+ if(!(DATA.features||[]).length){list.innerHTML=`<div class="card empty"><b>No features yet</b>Add one with <code>tools/library.py add-feature</code>, see <code>README.md</code>.</div>`;return}
+ if(!vis.length){list.innerHTML=`<div class="card empty"><b>Nothing found</b>Try a feature name, a release or a word from a change.</div>`;return}
+ list.innerHTML=vis.map(f=>`<section class="group"><div class="group-h"><h2>${esc(f.module||f.id)}</h2><span>${esc(f.id)}</span></div>${currentCard(f)}${releases(f)}</section>`).join("");
+}
+/* Ready to build: the page cannot write files, so the confirmation produces the exact release command */
+const PARTS_ORDER=Object.keys(PART_LABEL);
+let DLG=null;
+function openReady(fid){const f=DATA.features.find(x=>x.id===fid);DLG={f,version:f.nextVersion||"",story:"",approved:false,done:false,touched:{}};drawReady()}
+function closeReady(){DLG=null;document.getElementById("dlg").innerHTML=""}
+function readyCheck(){const f=DLG.f,c=f.current,miss=PARTS_ORDER.filter(k=>(c.parts||{})[k]!=="done"),e={};
+ if(!/^v\d+\.\d+$/.test(DLG.version))e.version="Use the form v2.2";else if((f.releases||[]).some(r=>r.version===DLG.version))e.version=`${DLG.version} exists already`;
+ if(!/^[A-Z][A-Z0-9]+-\d+$/.test(DLG.story))e.story="A tracker key like PRJ-900";
+ const why=miss.length?`Not complete: ${miss.map(k=>PART_LABEL[k]).join(", ")}.`:!(c.unreleased||[]).length?"No changes since the last release.":Object.keys(e).length?"Fill in release and design ticket.":!DLG.approved?"Confirm the approval in your issue tracker.":"";
+ return {miss,e,why}}
+function cmdText(){return `python3 tools/library.py release ${DLG.f.id} ${DLG.version} --story ${DLG.story}`}
+function drawReady(){if(!DLG)return;const f=DLG.f,c=f.current,un=c.unreleased||[],{miss,e,why}=readyCheck();
+ const err=k=>DLG.touched[k]&&e[k]?e[k]:"";
+ const chk=PARTS_ORDER.map(k=>{const ok=(c.parts||{})[k]==="done";return `<li class="${ok?"":"no"}"><span class="ib">${ok?CHECK:"–"}</span>${PART_LABEL[k]}${ok?"":` <span class="st">${esc((c.parts||{})[k]||"missing")}</span>`}</li>`}).join("");
+ const body=DLG.done?`<div class="ok">${CHECK}<span>Command copied. Run it in the terminal at the repository root. It freezes ${esc(DLG.version)}, moves the ${un.length} changes into its changelog section and adds it to this page after a reload.</span></div><input class="cmd" type="text" readonly value="${esc(cmdText())}" aria-label="Release command">
+   <div class="foot"><span class="why"></span><button class="btn" type="button" data-dlg="close">Close</button></div>`
+  :`<div class="sec"><span class="k">Parts</span><ul class="chk">${chk}</ul></div>
+   <div class="sec"><span class="k">Goes into the release (${un.length})</span>${un.length?`<ul class="log compact">${un.slice(0,3).map(x=>{const m=/^(\d\d\.\d\d)\.\d{4}: (.*)$/.exec(x)||[null,"",x];return `<li title="${esc(x)}"><span class="ld">${esc(m[1])}</span><span class="lt">${esc(m[2])}</span></li>`}).join("")}</ul>${un.length>3?`<a class="more" href="${esc(f.changelog)}">${un.length-3} more in the changelog</a>`:""}`:`<p class="sum" style="margin:0">Nothing since ${esc(c.basedOn||"the baseline")}.</p>`}</div>
+   <div class="row2"><label class="f">Release<input type="text" data-k="version" value="${esc(DLG.version)}" aria-invalid="${!!err("version")}"><span class="err">${esc(err("version"))}</span></label>
+    <label class="f">Design ticket<input type="text" data-k="story" value="${esc(DLG.story)}" placeholder="PRJ-900" aria-invalid="${!!err("story")}"><span class="err">${esc(err("story"))}</span></label></div>
+   <label class="cb"><input type="checkbox" data-k="approved" ${DLG.approved?"checked":""}><span>The product owner approved this state in the tracker. A release is frozen and never edited.</span></label>
+   <div class="foot"><span class="why">${esc(why)}</span><button class="btn" type="button" data-dlg="close">Cancel</button><button class="btn pri" type="button" data-dlg="confirm" ${why?`aria-disabled="true" title="${esc(why)}"`:""}>Copy release command</button></div>`;
+ const keep=document.activeElement&&document.activeElement.dataset?document.activeElement.dataset.k:null;
+ document.getElementById("dlg").innerHTML=`<div class="scrim" data-dlg="close"></div><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlgt"><h2 id="dlgt">Mark Ready to build</h2><p class="dsub">${esc(f.id)} current, updated ${date(c.updated)}</p>${body}</div>`;
+ if(keep){const n=document.querySelector(`.dlg [data-k="${keep}"]`);if(n&&n.type==="text"){n.focus();n.setSelectionRange(n.value.length,n.value.length)}}
+ else if(!DLG.done){const n=document.querySelector('.dlg [data-k="story"]');if(n)n.focus()}}
+document.addEventListener("click",e=>{const r=e.target.closest("[data-ready]");if(r){openReady(r.dataset.ready);return}
+ const a=e.target.closest("[data-dlg]");if(!a||!DLG)return;
+ if(a.dataset.dlg==="close"){closeReady();return}
+ if(a.dataset.dlg==="confirm"){DLG.touched={version:1,story:1,by:1};if(readyCheck().why){drawReady();return}
+  const txt=cmdText();const done=()=>{DLG.done=true;drawReady();const c=document.querySelector(".dlg .cmd");if(c){c.focus();c.select()}};
+  if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(txt).then(done,done);else done()}});
+document.addEventListener("input",e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k||!DLG||k==="approved")return;DLG[k]=e.target.value;drawReady()});
+document.addEventListener("change",e=>{const k=e.target.dataset&&e.target.dataset.k;if(!DLG||!k)return;if(k==="approved")DLG.approved=e.target.checked;else DLG.touched[k]=1;drawReady()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&DLG)closeReady()});
+document.getElementById("q").addEventListener("input",render);
+if(window.LIBRARY_INDEX){DATA=window.LIBRARY_INDEX;render()}
+else document.getElementById("list").innerHTML=`<div class="card empty"><b>The version index is missing</b><code>versions.js</code> must sit next to this page.</div>`;
+</script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototype viewer</title>
+<style>
+/* Design system tokens, same set as index.html */
+:root{--bg:#ffffff;--bg-2:#f8f8f8;--bg-3:#f2f3f3;--bg-hover:#e8eaeb;--text:#2b373d;--label:#606c72;--placeholder:#869096;--border-1:#a8b1b5;--border-2:#e8eaeb;
+--brand-weak:#e5e7eb;--brand-hover:#374151;--brand-text:#ffffff;--focus:#2563eb;--active-weak:#d5efff;--active-border:#a0c3ed;--active-text:#1e40af;--r-8:8px;color-scheme:light}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{display:flex;flex-direction:column;background:var(--bg-2);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:20px}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.ic{width:16px;height:16px;flex:none}
+.bar{flex:none;height:44px;display:flex;align-items:center;gap:12px;padding:0 16px;background:var(--bg);border-bottom:1px solid var(--border-2);white-space:nowrap}
+.back{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px 0 6px;border-radius:var(--r-8);font-weight:700;text-decoration:none}
+.back:hover{background:var(--bg-hover)}
+.sep{width:1px;height:20px;background:var(--border-2)}
+.name{font-weight:700}
+.ttl{color:var(--label);overflow:hidden;text-overflow:ellipsis;min-width:0}
+.badge{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:6px;font-size:12px;line-height:16px;font-weight:700;border:1px solid transparent}
+.b-draft{background:var(--bg-3);color:var(--label);border-color:var(--border-2)}
+.b-ready{background:var(--brand-weak);color:var(--brand-text);border-color:var(--brand-hover)}
+.b-built{background:var(--active-weak);color:var(--active-text);border-color:var(--active-border)}
+.b-replaced{background:var(--bg);color:var(--placeholder);border-color:var(--border-2)}
+.sp{flex:1}
+.lk{display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 10px;border-radius:var(--r-8);text-decoration:none;color:var(--label)}
+.lk:hover{background:var(--bg-hover);color:var(--text)}
+kbd{font:inherit;font-size:12px;line-height:16px;padding:0 5px;border:1px solid var(--border-1);border-radius:4px;color:var(--label)}
+iframe{flex:1;width:100%;border:0;background:var(--bg)}
+.msg{margin:48px auto;max-width:520px;text-align:center;color:var(--label)}
+.msg b{display:block;color:var(--text);font-size:16px;line-height:24px;margin-bottom:4px}
+@media (max-width:720px){.ttl,.lk.opt,.hint{display:none}}
+</style>
+</head>
+<body>
+<div class="bar" id="bar">
+ <a class="back" href="index.html" title="Back to the library (Alt + L)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l14 0"/><path d="M5 12l6 6"/><path d="M5 12l6 -6"/></svg>Library</a>
+ <span class="sep" aria-hidden="true"></span>
+ <span id="info"></span>
+</div>
+<script src="versions.js"></script>
+<script>
+const BADGE={"Draft":"b-draft","Ready to build":"b-ready","Built":"b-built","Replaced":"b-replaced"};
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const key=new URLSearchParams(location.search).get("v")||"";
+const idx=window.LIBRARY_INDEX||{features:[]};
+const [fid,which]=key.split("/");
+const f=(idx.features||[]).find(x=>x.id===fid);
+/* resolve current, a release (v2.2) or a baseline into one shape */
+let v=null;
+if(f&&which==="current")v={label:"Current",status:f.current.status,title:f.title,links:f.current.links,isCurrent:true};
+else if(f){const r=(f.releases||[]).find(x=>x.version===which);if(r)v={label:r.version,status:r.status,title:f.title,links:r.links};
+ else{const b=(f.baselines||[]).find(x=>x.id===which);if(b)v={label:b.label,status:"",title:b.note||f.title,links:b.links}}}
+const info=document.getElementById("info");
+if(!v){
+ info.outerHTML=`<span class="ttl">Not found</span>`;
+ document.body.insertAdjacentHTML("beforeend",`<div class="msg"><b>This prototype is not in the library</b>Back to the library and pick one from the list.</div>`);
+}else{
+ const l=v.links||{};
+ const others=v.isCurrent?"":`<a class="lk" href="view.html?v=${esc(fid)}/current">Current</a>`;
+ info.outerHTML=`<span class="name">${esc(fid)} ${esc(v.label)}</span>${v.status?`<span class="badge ${BADGE[v.status]||"b-draft"}">${esc(v.status)}</span>`:""}<span class="ttl">${esc(v.title)}</span><span class="sp"></span>`
+  +others+(l.specs||[]).map(s=>`<a class="lk opt" href="${esc(s.href)}">${esc(s.label)}</a>`).join("")+`<a class="lk opt" href="${esc(f.changelog)}">Changelog</a>`
+  +`<a class="lk opt" href="${esc(l.prototype)}${esc(location.hash)}" title="Open the prototype without this bar">Full window</a><span class="hint"><kbd>Alt</kbd> <kbd>L</kbd></span>`;
+ document.title=`${fid} ${v.label}, prototype viewer`;
+ const fr=document.createElement("iframe");fr.title=v.title;fr.src=l.prototype+location.hash;document.body.appendChild(fr);
+ /* the viewer does not remember the route: a reload starts the prototype like a user would (sign-in, intro). Only links that carry a route on purpose (spec state links) open a case directly. */
+ /* Alt + L back to the library, also while the focus is inside the prototype (served only) */
+ const toLib=e=>{if(e.altKey&&(e.code==="KeyL")){e.preventDefault();location.href="index.html"}};
+ addEventListener("keydown",toLib);fr.addEventListener("load",()=>{try{fr.contentWindow.addEventListener("keydown",toLib)}catch(e){}});
+}
+</script>
+</body>
+</html>
