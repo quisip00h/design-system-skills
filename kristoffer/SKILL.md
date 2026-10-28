@@ -7,7 +7,9 @@ description: Use when a customer's design system and an AI coding agent don't ge
 
 **Design engineer. I ship with Claude Code.**
 
-70–100 screens to production · QA that found 1,162 instances where the naive pass saw 292 · 97.8% of new text on design-system styles
+70–100 screens to production · handover in a day, 2–3 questions back from dev · 97.8% of new text on design-system styles
+
+Live work: [coachbot.ai](https://coachbot.ai) (redesign and build). Client work under NDA, shown live on request.
 
 I go into a team, learn the real workflow, and make their agents build on *their* system instead of the average of the internet.
 
@@ -19,6 +21,8 @@ I go into a team, learn the real workflow, and make their agents build on *their
 - Someone needs to be in the room with the customer, then go build
 
 ## Receipts
+
+Enterprise design systems live in Figma; the code follows. I work on both sides: [`figma-ds-qa`](../skills/figma-ds-qa/SKILL.md) for the canvas, [`ui-lint`](../skills/ui-lint/SKILL.md) for the code.
 
 ### Enterprise back office (client under NDA)
 
@@ -50,6 +54,12 @@ Product, design and frontend in a small team. I build the studio where organisat
 2. Taste becomes rules
 3. Rules become checks
 4. Checks get tested
+
+## What I'd bring back to Impeccable
+
+- Enterprise teams need the agent to respect *their* tokens and components, not general taste alone
+- A design review must see slot and nested content, or it passes what it never saw
+- The reviewer needs its own tests: a clean result on a big input is a bug signal
 
 ## Known limitations
 

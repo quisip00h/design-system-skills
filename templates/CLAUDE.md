@@ -32,7 +32,7 @@ The spec is the single source and doubles as the build prompt (`templates/screen
 3. Build natively in Figma through the non-negotiable cycle below.
 4. Report what was built, what deviated and why, what is still open. Update the Open build points block.
 
-**When the spec is thin on a point, ask the designer. Never invent.** A field, a state, a rule or a copy line that is not in the spec or the research is a question, not a gap to fill with a plausible guess.
+**When the spec is thin on a point, ask `<the designer>`. Never invent.** A field, a state, a rule or a copy line that is not in the spec or the research is a question, not a gap to fill with a plausible guess.
 
 Tag every claim:
 
@@ -75,7 +75,7 @@ The full list with fixes is in `skills/figma-ds-build/HAZARDS.md`. The ones that
 3. Never create top-level nodes on `figma.currentPage`; resolve the page by id.
 4. Resizing a section releases the children it no longer covers. Resize, place, verify.
 5. Prototype links cannot cross pages.
-6. After a DS sync, untouched instances stay on the old version until a human clicks *Update all* in the Assets panel. Remind the designer.
+6. After a DS sync, untouched instances stay on the old version until a human clicks *Update all* in the Assets panel. Remind `<the designer>`.
 
 ### Missing DS components
 
