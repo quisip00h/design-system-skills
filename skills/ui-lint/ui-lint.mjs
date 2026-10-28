@@ -14,6 +14,8 @@ export const LEVELS = {
   "transition-all": "warn",
   "title-case": "warn",
   "forbidden-word": "error",
+  "off-token-definition": "error",
+  "no-declared-size": "warn",
 };
 const EXTS = new Set([".html", ".htm", ".css", ".jsx", ".tsx"]);
 const SKIP_DIRS = new Set(["node_modules", ".git", "dist", "build", ".next", "coverage"]);
@@ -27,6 +29,9 @@ const WEIGHT_WORDS = { normal: 400, bold: 700 };
 const SMALL_WORDS = new Set("a an and as at but by for from in into nor of on onto or over per the to vs via with".split(" "));
 // opening tag whose attributes may hold {expressions}, including arrow functions
 const OPEN = "(?:[^>{}]|\\{(?:[^{}]|\\{[^{}]*\\})*\\})*";
+// elements the browser shrinks to `smaller` unless the code sets a size
+const SHRUNK = ["small", "sub", "sup"];
+const blank = s => s.replace(/[^\n]/g, " ");
 
 // ---------------------------------------------------------------- config
 export function loadConfig(path) {
@@ -77,9 +82,40 @@ export function collect(paths, cfg) {
 }
 
 // ---------------------------------------------------------------- lint
+// The CSS in a source, as [css, offset] pairs: the whole file for .css, otherwise
+// <style> blocks and css`` / styled.x`` templates. Comments are blanked, offsets kept.
+function cssOf(src) {
+  const ext = extname(src.path).toLowerCase();
+  let text = src.text.replace(/\/\*[\s\S]*?\*\//g, blank);
+  if (ext === ".css") return { text, css: [[text, 0]] };
+  text = text.replace(/<!--[\s\S]*?-->/g, blank);
+  if (ext === ".jsx" || ext === ".tsx") text = text.replace(/^[ \t]*\/\/[^\n]*/gm, blank);
+  const css = [];
+  for (const m of text.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)) css.push([m[1], m.index + m[0].indexOf(m[1])]);
+  for (const m of text.matchAll(/\b(?:css|styled(?:\.[a-zA-Z]+|\([^)]*\)))\s*`([^`]*)`/g)) css.push([m[1], m.index + m[0].indexOf(m[1])]);
+  return { text, css };
+}
+
+// Which shrunk tags and which classes get a font-size from some rule, in any source.
+// A <small> styled in app.css is fine in page.html, so this looks across all files.
+function sizedSelectors(sources) {
+  const tags = new Set(), classes = new Set();
+  for (const src of sources) for (const [css] of cssOf(src).css) {
+    for (const m of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+      if (!/(^|[\s;])font(-size)?\s*:/.test(m[2])) continue;
+      for (const t of SHRUNK) if (new RegExp(`(^|[\\s,>+~(])${t}(?![\\w-])`).test(m[1])) tags.add(t);
+      for (const c of m[1].matchAll(/\.([\w-]+)/g)) classes.add(c[1]);
+    }
+  }
+  return { tags, classes };
+}
+
+const hexRgb = h => { h = normHex(h); return /^#[0-9a-f]{6}/.test(h) ? [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)) : null; };
+
 export function lint(sources, cfg) {
   const findings = [];
-  const checked = { colour: 0, spacing: 0, fontSize: 0, fontWeight: 0, transition: 0, label: 0, text: 0 };
+  const checked = { colour: 0, spacing: 0, fontSize: 0, fontWeight: 0, transition: 0, label: 0, text: 0, element: 0 };
+  const sized = sizedSelectors(sources);
   let lines = 0;
 
   for (const src of sources) {
@@ -118,10 +154,25 @@ export function lint(sources, cfg) {
     const nearest = (n, scale) => scale.reduce((a, b) => (Math.abs(b - Math.abs(n)) < Math.abs(a - Math.abs(n)) ? b : a), scale[0]);
     const stripFns = v => { let p; do { p = v; v = v.replace(/[a-z-]+\([^()]*\)/gi, " "); } while (v !== p); return v; };
 
+    // A custom property that defines a raw colour must define one the design system has.
+    // Otherwise `--danger: #c9302c` passes, and every var(--danger) after it looks on-system.
+    const checkDefinition = (prop, value, at) => {
+      if (!cfg.colours.size) return;
+      const raw = [...value.matchAll(HEX), ...value.matchAll(COLOUR_FN)].map(m => m[0]);
+      if (NAMED.has(value.toLowerCase())) raw.push(value);
+      for (const c of raw) {
+        checked.colour++;
+        if (cfg.colours.has(normHex(c))) continue;
+        const rgb = hexRgb(c);
+        const near = rgb && [...cfg.colours].map(([hex, name]) => [hexRgb(hex).reduce((d, v, i) => d + (v - rgb[i]) ** 2, 0), name]).sort((a, b) => a[0] - b[0])[0];
+        add("off-token-definition", at, `${prop}: ${c}`, "custom property defines a colour that is not in the design system", near ? `var(--${near[1].replace(/[/\s]+/g, "-")})` : undefined);
+      }
+    };
+
     const checkDecl = (prop, value, at) => {
       prop = prop.toLowerCase();
       value = value.trim();
-      if (prop.startsWith("--")) return;           // token definitions
+      if (prop.startsWith("--")) { checkDefinition(prop, value, at); return; }
       if (prop === "content") return;
       if (/(color|background|border|outline|fill|stroke|shadow)/.test(prop) || HEX.test(value) || COLOUR_FN.test(value)) {
         HEX.lastIndex = 0; COLOUR_FN.lastIndex = 0;
@@ -157,20 +208,13 @@ export function lint(sources, cfg) {
     };
 
     const scanCss = (css, base) => {
+      css = css.replace(/@font-face\s*\{[^}]*\}/gi, blank);   // descriptors of a font file, not usage
       for (const m of css.matchAll(/(-{0,2}[a-zA-Z][a-zA-Z-]*)\s*:\s*([^;{}]*?)\s*(?=;|\})/g)) checkDecl(m[1], m[2], base + m.index);
     };
 
-    const blank = s => s.replace(/[^\n]/g, " ");
-    let text = src.text.replace(/\/\*[\s\S]*?\*\//g, blank);
-
-    if (ext === ".css") { scanCss(text, 0); continue; }
-
-    text = text.replace(/<!--[\s\S]*?-->/g, blank);
-    if (ext === ".jsx" || ext === ".tsx") text = text.replace(/^[ \t]*\/\/[^\n]*/gm, blank);
-
-    // <style> blocks and css`` / styled.x`` templates
-    for (const m of text.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)) scanCss(m[1], m.index + m[0].indexOf(m[1]));
-    for (const m of text.matchAll(/\b(?:css|styled(?:\.[a-zA-Z]+|\([^)]*\)))\s*`([^`]*)`/g)) scanCss(m[1], m.index + m[0].indexOf(m[1]));
+    const { text, css } = cssOf(src);
+    for (const [c, base] of css) scanCss(c, base);
+    if (ext === ".css") continue;
 
     // style="..." attributes
     for (const m of text.matchAll(/\sstyle\s*=\s*(?:"([^"]*)"|'([^']*)')/g)) {
@@ -206,6 +250,17 @@ export function lint(sources, cfg) {
         if ((a = /^text-\[([\d.]+(?:px|rem))\]$/.exec(c))) checkDecl("font-size", a[1], at);
         if ((a = /^font-\[(\d+)\]$/.exec(c))) checkDecl("font-weight", a[1], at);
       }
+    }
+
+    // <small>, <sub>, <sup> without a size render at `smaller`: 83 % of the parent, off any type scale
+    for (const m of text.matchAll(new RegExp(`<(${SHRUNK.join("|")})\\b(${OPEN})>`, "gi"))) {
+      const tag = m[1].toLowerCase(), attrs = m[2];
+      checked.element++;
+      if (sized.tags.has(tag) || /\bstyle\s*=\s*(?:["'][^"']*|\{\{[^}]*)font(?:-s|S)ize/.test(attrs)) continue;
+      const cls = /\b(?:class|className)\s*=\s*(?:"([^"]*)"|'([^']*)'|\{`([^`]*)`\})/.exec(attrs);
+      const list = cls ? (cls[1] ?? cls[2] ?? cls[3]).split(/\s+/) : [];
+      if (list.some(c => sized.classes.has(c) || /^(?:[\w-]+:)*text-(?:xs|sm|base|lg|[2-9]?xl|\[[\d.]+(?:px|rem)\])$/.test(c))) continue;
+      add("no-declared-size", m.index, `<${tag}>`, `<${tag}> without a font-size renders at the browser's smaller size, off the type scale`, `one of ${cfg.sizes.join(", ")}px`);
     }
 
     // ---- copy checks: labels and visible text
@@ -253,9 +308,13 @@ export function lint(sources, cfg) {
 const words = label => label.split(" ").map(w => w.replace(/^[^\p{L}\d]+|[^\p{L}\d]+$/gu, ""));
 const isPlain = (w, allow) => !SMALL_WORDS.has(w.toLowerCase()) && !allow.has(w) && !(w.length > 1 && w === w.toUpperCase()) && !/\d/.test(w);
 
+// An avatar initial in front of a name ("A Alex Morgan", "AM Alex Morgan") marks a person, not a label.
+const isAvatarName = ws => /^\p{Lu}{1,3}$/u.test(ws[0]) && ws.length > ws[0].length &&
+  ws.slice(1, 1 + ws[0].length).map(w => w[0]).join("") === ws[0];
+
 export function isTitleCase(label, allow = new Set()) {
   const ws = words(label).filter(w => /\p{L}/u.test(w));
-  if (ws.length < 2) return false;
+  if (ws.length < 2 || isAvatarName(ws)) return false;
   const rest = ws.slice(1).filter(w => isPlain(w, allow));
   return rest.length > 0 && rest.every(w => /^\p{Lu}/u.test(w));
 }

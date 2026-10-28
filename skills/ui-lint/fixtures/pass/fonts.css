@@ -1,0 +1,5 @@
+/* expect: none */
+@font-face { font-family: "Brand"; src: url(brand-light.woff2) format("woff2"); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: "Brand"; src: url(brand-semibold.woff2) format("woff2"); font-weight: 600; }
+body { font-family: "Brand", sans-serif; font-size: 16px; font-weight: 400; }
+small, sub, sup { font-size: 12px; }

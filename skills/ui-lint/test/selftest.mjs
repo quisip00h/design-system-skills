@@ -61,8 +61,19 @@ for (const f of readdirSync(join(root, "fixtures", "pass")).sort()) {
   check(lint([], cfg).suspicious, "an empty file list is suspicious");
 }
 
+// Size declared in one file covers the element in another: the check looks across sources.
+{
+  const page = { path: "page.html", text: "<p>Total <small>incl. tax</small></p>" };
+  check(lint([page], cfg).counts["no-declared-size"] === 1, "an unsized <small> is found");
+  check(!lint([page, read("pass", "fonts.css")], cfg).counts["no-declared-size"], "a size set in another file's CSS covers it");
+  const d = lint([read("fail", "definitions.css")], cfg).findings.find(x => x.value === "--muted: #5b636b");
+  check(d && d.suggest === "var(--text-secondary)", "an off-token definition suggests the nearest token");
+}
+
 check(isTitleCase("Save Changes") && !isTitleCase("Save changes") && !isTitleCase("Export PDF") && !isTitleCase("Open in Figma", cfg.allow),
       "title case: flags Save Changes, passes sentence case, acronyms and allowed names");
+check(!isTitleCase("A Alex Morgan") && !isTitleCase("AM Alex Morgan") && isTitleCase("A Big Deal") && isTitleCase("AB Save Changes"),
+      "title case: an avatar initial in front of a name is a person, not a label");
 
 console.log(failed ? `\n${failed} failed` : "\nall passed");
 process.exit(failed ? 1 : 0);

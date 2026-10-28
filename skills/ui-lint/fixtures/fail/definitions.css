@@ -1,0 +1,9 @@
+/* expect: off-token-definition 3, raw-colour 1 */
+:root {
+  --text-primary: #1e2328;
+  --danger: #c9302c;
+  --accent: rgb(12 40 90);
+  --muted: #5b636b;
+  --alias: var(--text-primary);
+}
+.alert { color: #c9302c; }

@@ -13,6 +13,8 @@ Live work: [coachbot.ai](https://coachbot.ai) (redesign and build). Client work 
 
 I go into a team, learn the real workflow, and make their agents build on *their* system instead of the average of the internet.
 
+Freelance, so I think like someone who owns the outcome, not a ticket. Agency-trained, so I'm fast: build it, show it, ship it. No corporate theatre, no decks about decks.
+
 ## When to use
 
 - The customer has a design system and the agents ignore it
@@ -48,6 +50,12 @@ Product, design and frontend in a small team. I build the studio where organisat
 - While working on the chat UI I noticed agent internals going out to the participant's browser and patched it with a fail-closed allowlist
 - Reference: Lewin Keller, CEO of CoachBot, happy to talk about my work
 
+## Where I come from
+
+- UX research and service design, in agencies, for Toyota, Samsung, Siemens and Fjällräven. That's where the habit comes from: find out how the work really happens before designing anything
+- Agency pace: real deadlines, real clients, the work gets shown, not described
+- Then I went freelance and started building what I design. Discovery, spec, prototype and code from one person means nothing gets lost between them
+
 ## How I work
 
 1. Spec is the prompt
@@ -55,9 +63,12 @@ Product, design and frontend in a small team. I build the studio where organisat
 3. Rules become checks
 4. Checks get tested
 
+Short loops, plain messages, a working thing over a plan about one. When something is wrong I say so early, and I say what it costs to fix.
+
 ## What I'd bring back to Impeccable
 
 - Enterprise teams need the agent to respect *their* tokens and components, not general taste alone
+- Tried it next to my ui-lint on three client prototypes (desktop-only, so mobile findings left out). Impeccable caught the accessibility and flow problems my checks have no rules for, ui-lint the token drift (191 off-scale values). Four things ui-lint missed in that run are now rules with their own fixtures. Fair caveat: Impeccable ran without a DESIGN.md, so it never saw the tokens. Neither checks whether a component is the design system's own
 - A design review must see slot and nested content, or it passes what it never saw
 - The reviewer needs its own tests: a clean result on a big input is a bug signal
 
@@ -65,7 +76,6 @@ Product, design and frontend in a small team. I build the studio where organisat
 
 - Strongest on frontend, agent tooling and evals for design output. Backend: I read it and work with it, I don't own it.
 - The client work is under NDA. Happy to walk through it live, redacted
-- Open question I'd love to answer with you: what does Impeccable catch on my output that my checks miss, and the other way round?
 
 ## Elsewhere
 

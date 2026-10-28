@@ -1,6 +1,6 @@
 ---
 name: ui-lint
-description: Lint agent-written HTML, CSS and JSX against the design system's tokens. Flags raw colour literals, spacing off the scale, font sizes and weights outside the type scale, transition all, Title Case in buttons and headings, and words on a forbidden list. Zero dependencies. Run it after an agent writes or changes UI code, in CI, or on demand ("is this on-system?", "lint the UI").
+description: Lint agent-written HTML, CSS and JSX against the design system's tokens. Flags raw colour literals, custom properties that define colours the DS does not have, spacing off the scale, font sizes and weights outside the type scale, unsized small/sub/sup, transition all, Title Case in buttons and headings, and words on a forbidden list. Zero dependencies. Run it after an agent writes or changes UI code, in CI, or on demand ("is this on-system?", "lint the UI").
 ---
 
 # UI lint
@@ -47,23 +47,27 @@ Replace the sample values with the design system's. Generate the file from the t
 
 | Rule | Default | Flags | Does not flag |
 |---|---|---|---|
-| `raw-colour` | error | hex, `rgb()`, `hsl()`, `oklch()` and friends, named colours, in CSS, style attributes, JSX style objects, SVG `fill` / `stroke`, arbitrary utility values like `bg-[#fff]` | `var()`, `currentColor`, `transparent`, custom property definitions (`--x: #fff`), `content` |
+| `raw-colour` | error | hex, `rgb()`, `hsl()`, `oklch()` and friends, named colours, in CSS, style attributes, JSX style objects, SVG `fill` / `stroke`, arbitrary utility values like `bg-[#fff]` | `var()`, `currentColor`, `transparent`, custom property definitions (`--x: #fff`, see the next rule), `content` |
+| `off-token-definition` | error | a custom property that defines a raw colour the `colour` map does not have: `--danger: #c9302c`. Suggests the nearest token | definitions whose value is a token colour or a `var()`. Off when `colour` is empty |
 | `off-scale-spacing` | error | `margin`, `padding`, `gap` in px or rem that are not on the scale, JSX numbers, `p-[13px]` | `auto`, `%`, values inside `calc()` / `var()`, positions (`top`, `left`), borders |
 | `off-scale-font-size` | error | `font-size` outside the type scale, `fontSize: 15`, `text-[13px]` | keywords, `var()` |
-| `off-scale-font-weight` | error | weights outside the scale, `font-[600]` | |
+| `off-scale-font-weight` | error | weights outside the scale, `font-[600]` | descriptors inside `@font-face` (they describe the font file, not its use) |
+| `no-declared-size` | warn | `<small>`, `<sub>`, `<sup>` with no font-size: the browser renders them at `smaller`, 83 % of the parent, so 11.67 px under a 14 px paragraph | a size from a tag rule (`small { … }`) in any linted file, a class whose rule sets one, a `text-xs`-style utility, an inline `font-size` |
 | `transition-all` | warn | `transition: all`, `transition-property: all`, the `transition-all` class | named properties |
-| `title-case` | warn | buttons (also `<Button>`) and headings where every word after the first is capitalised | sentence case, acronyms (`PDF`), small words, names in `titleCaseAllow` |
+| `title-case` | warn | buttons (also `<Button>`) and headings where every word after the first is capitalised | sentence case, acronyms (`PDF`), small words, names in `titleCaseAllow`, a name behind its avatar initials (`AM Alex Morgan`) |
 | `forbidden-word` | error | listed words in visible text and in `placeholder`, `title`, `alt`, `aria-label`, `label` | code, class names, comments |
 
-Title Case is a warning because it cannot tell a proper noun from a capitalised word. German UI capitalises nouns: set `title-case` to `off` for German-only code, or add the nouns to the allow list.
+Title Case is a warning because it cannot tell a proper noun from a capitalised word. A person's name with no avatar in front of it still gets flagged; read those and move on. German UI capitalises nouns: set `title-case` to `off` for German-only code, or add the nouns to the allow list.
+
+`no-declared-size` looks across every file in the run, because the rule that sizes `<small>` usually sits in a stylesheet, not in the page. Lint the page without its CSS and every `<small>` looks unsized.
 
 ## Read the report
 
 ```
-ui-lint: 5 files, 42 lines, 40 values and labels checked
+ui-lint: 7 files, 63 lines, 60 values and labels checked
   fixtures/fail/page.html:6:11      error  off-scale-spacing      20px  20px is off the spacing scale (try 16px)
   fixtures/fail/page.html:10:3      warn   title-case             Welcome To Your Dashboard  Title Case in a label, use sentence case (try Welcome to your dashboard)
-21 errors, 5 warnings. FAIL
+25 errors, 8 warnings. FAIL
 ```
 
 - **PASS** = 0 errors **and** not suspicious. Warnings are acceptable.
@@ -87,3 +91,4 @@ What to do with a suspicious run: plant one known violation (a `color: #123456;`
 - **Fix the cause, not the line.** Ten raw colours in one component usually mean one missing token. Ask for the token, or map to the closest one and log the gap.
 - **No rule without a fixture.** Every new check gets a failing fixture that proves it fires and a passing one that proves it stays quiet.
 - **Taste becomes rules, rules become checks.** When a review keeps catching the same thing by eye, add it here.
+- **Let another reviewer find your blind spots.** `off-token-definition`, `no-declared-size`, the `@font-face` exemption and the avatar exemption came from running a second design reviewer over the same prototypes and reading what each one missed.

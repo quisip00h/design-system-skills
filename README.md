@@ -39,7 +39,7 @@ Extracted from real enterprise work, with every client detail removed. Use it, f
 
 | | What | Use it when |
 |---|---|---|
-| [`skills/ui-lint`](skills/ui-lint/SKILL.md) | Zero-dependency Node linter for HTML, CSS and JSX: raw colours, spacing and type off the scale, `transition: all`, Title Case labels, forbidden words. Ships with fixtures and a self-test | an agent wrote or changed UI code |
+| [`skills/ui-lint`](skills/ui-lint/SKILL.md) | Zero-dependency Node linter for HTML, CSS and JSX: raw colours, colour tokens the DS does not have, spacing and type off the scale, unsized `<small>`, `transition: all`, Title Case labels, forbidden words. Ships with fixtures and a self-test | an agent wrote or changed UI code |
 
 **Examples**
 
