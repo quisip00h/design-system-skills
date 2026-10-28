@@ -74,7 +74,10 @@ Short loops, plain messages, a working thing over a plan about one. When somethi
 
 ## I tried Impeccable on my own work
 
-I ran it next to my ui-lint on three client prototypes (desktop-only, so mobile findings left out). Impeccable caught the accessibility and flow problems my checks have no rules for, ui-lint the token drift (191 off-scale values). Four things ui-lint missed in that run are now rules with their own fixtures. Fair caveat: Impeccable ran without a DESIGN.md, so it never saw the tokens. Neither checks whether a component is the design system's own.
+I ran it next to my ui-lint on three client prototypes, twice, desktop only, so mobile findings are left out. The first run had no project context: Impeccable caught the accessibility and flow problems my checks have no rules for, ui-lint the token drift.
+For the second run I set Impeccable up the way its docs describe, with `init` and `document`, and gave it the client's design system and UX rules. That changed a lot. It judged the screens against the team's own rules and found what my linter can't see, because it is about meaning, not values: a semantic token mapped to the wrong palette step, a valid size used in the wrong role, local stand-ins for components the system already has.
+ui-lint still covers every off-scale value at every location, spacing included, and runs the same way every time in CI. Four gaps the first run showed are now rules with fixtures, and the second run found one of them still has a hole.
+So I'd use both: Impeccable as the review that knows the product, ui-lint as the gate that keeps the tokens honest.
 
 ## What I'd bring back to Impeccable
 
