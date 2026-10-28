@@ -52,14 +52,14 @@ Replace the sample values with the design system's. Generate the file from the t
 | `off-scale-spacing` | error | `margin`, `padding`, `gap` in px or rem that are not on the scale, JSX numbers, `p-[13px]` | `auto`, `%`, values inside `calc()` / `var()`, positions (`top`, `left`), borders |
 | `off-scale-font-size` | error | `font-size` outside the type scale, `fontSize: 15`, `text-[13px]` | keywords, `var()` |
 | `off-scale-font-weight` | error | weights outside the scale, `font-[600]` | descriptors inside `@font-face` (they describe the font file, not its use) |
-| `no-declared-size` | warn | `<small>`, `<sub>`, `<sup>` with no font-size: the browser renders them at `smaller`, 83 % of the parent, so 11.67 px under a 14 px paragraph | a size from a tag rule (`small { … }`) in any linted file, a class whose rule sets one, a `text-xs`-style utility, an inline `font-size` |
+| `no-declared-size` | warn | `<small>`, `<sub>`, `<sup>` with no font-size: the browser renders them at `smaller`, 83 % of the parent, so 11.67 px under a 14 px paragraph | a rule that sets a size and reaches the element (`small { … }` everywhere, `.note small { … }` only inside `.note`), from any linted file, a `text-xs`-style utility, an inline `font-size` |
 | `transition-all` | warn | `transition: all`, `transition-property: all`, the `transition-all` class | named properties |
 | `title-case` | warn | buttons (also `<Button>`) and headings where every word after the first is capitalised | sentence case, acronyms (`PDF`), small words, names in `titleCaseAllow`, a name behind its avatar initials (`AM Alex Morgan`) |
 | `forbidden-word` | error | listed words in visible text and in `placeholder`, `title`, `alt`, `aria-label`, `label` | code, class names, comments |
 
 Title Case is a warning because it cannot tell a proper noun from a capitalised word. A person's name with no avatar in front of it still gets flagged; read those and move on. German UI capitalises nouns: set `title-case` to `off` for German-only code, or add the nouns to the allow list.
 
-`no-declared-size` looks across every file in the run, because the rule that sizes `<small>` usually sits in a stylesheet, not in the page. Lint the page without its CSS and every `<small>` looks unsized.
+`no-declared-size` looks across every file in the run, because the rule that sizes `<small>` usually sits in a stylesheet, not in the page. Lint the page without its CSS and every `<small>` looks unsized. A contextual rule counts only where its context is: static HTML is walked with its ancestors, so `.note small` does not size a `<small>` outside `.note`. In JSX and in markup built inside a `<script>`, the context above the fragment is unknown, and a contextual rule is taken to reach it.
 
 ## Read the report
 

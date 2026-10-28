@@ -31,6 +31,7 @@ const SMALL_WORDS = new Set("a an and as at but by for from in into nor of on on
 const OPEN = "(?:[^>{}]|\\{(?:[^{}]|\\{[^{}]*\\})*\\})*";
 // elements the browser shrinks to `smaller` unless the code sets a size
 const SHRUNK = ["small", "sub", "sup"];
+const VOID = new Set("area base br col embed hr img input link meta source track wbr".split(" "));
 const blank = s => s.replace(/[^\n]/g, " ");
 
 // ---------------------------------------------------------------- config
@@ -96,18 +97,49 @@ function cssOf(src) {
   return { text, css };
 }
 
-// Which shrunk tags and which classes get a font-size from some rule, in any source.
-// A <small> styled in app.css is fine in page.html, so this looks across all files.
+// A compound selector as tag and classes: "p.note" is { tag: "p", classes: ["note"] }.
+// Ids, attributes and pseudo-classes are ignored, which errs towards "sized".
+const compound = s => ({ tag: (/^[a-z][\w-]*/i.exec(s) || [""])[0].toLowerCase(), classes: [...s.matchAll(/\.([\w-]+)/g)].map(m => m[1]) });
+const anywhere = c => c.tag === "html" || c.tag === "body" || (!c.tag && !c.classes.length);
+const classesOf = attrs => {
+  const m = /\b(?:class|className)\s*=\s*(?:"([^"]*)"|'([^']*)'|\{`([^`]*)`\})/.exec(attrs);
+  return m ? (m[1] ?? m[2] ?? m[3]).split(/\s+/).filter(Boolean) : [];
+};
+
+// Every selector whose rule sets a font-size, as a chain of compounds with the target last.
+// Collected across all sources: a <small> styled in app.css is fine in page.html.
 function sizedSelectors(sources) {
-  const tags = new Set(), classes = new Set();
+  const chains = [];
   for (const src of sources) for (const [css] of cssOf(src).css) {
     for (const m of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
       if (!/(^|[\s;])font(-size)?\s*:/.test(m[2])) continue;
-      for (const t of SHRUNK) if (new RegExp(`(^|[\\s,>+~(])${t}(?![\\w-])`).test(m[1])) tags.add(t);
-      for (const c of m[1].matchAll(/\.([\w-]+)/g)) classes.add(c[1]);
+      for (const sel of m[1].split(",")) {
+        if (sel.includes("::")) continue;
+        const parts = sel.trim().split(/\s*[>+~]\s*|\s+/).filter(Boolean);
+        if (parts.length) chains.push(parts.map(compound));
+      }
     }
   }
-  return { tags, classes };
+  return chains;
+}
+
+// Does this selector chain reach this element? `.note small` sizes a <small> inside
+// .note, not every <small> in the product. Combinators are read as descendant.
+// In a fragment (JSX, markup built in a script) the context above the fragment's root
+// is unknown, so compounds the known ancestors run out on are taken as present.
+function reaches(chain, el, ancestors, fragment) {
+  const target = chain[chain.length - 1];
+  if (!target.tag && !target.classes.length) return false;
+  if ((target.tag && target.tag !== el.tag) || !target.classes.every(k => el.classes.includes(k))) return false;
+  let i = ancestors.length - 1;
+  for (let j = chain.length - 2; j >= 0; j--) {
+    const c = chain[j];
+    if (anywhere(c)) continue;
+    while (i >= 0 && !((!c.tag || c.tag === ancestors[i].tag) && c.classes.every(k => ancestors[i].classes.includes(k)))) i--;
+    if (i < 0) return fragment;
+    i--;
+  }
+  return true;
 }
 
 const hexRgb = h => { h = normHex(h); return /^#[0-9a-f]{6}/.test(h) ? [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)) : null; };
@@ -252,16 +284,29 @@ export function lint(sources, cfg) {
       }
     }
 
-    // <small>, <sub>, <sup> without a size render at `smaller`: 83 % of the parent, off any type scale
-    for (const m of text.matchAll(new RegExp(`<(${SHRUNK.join("|")})\\b(${OPEN})>`, "gi"))) {
-      const tag = m[1].toLowerCase(), attrs = m[2];
-      checked.element++;
-      if (sized.tags.has(tag) || /\bstyle\s*=\s*(?:["'][^"']*|\{\{[^}]*)font(?:-s|S)ize/.test(attrs)) continue;
-      const cls = /\b(?:class|className)\s*=\s*(?:"([^"]*)"|'([^']*)'|\{`([^`]*)`\})/.exec(attrs);
-      const list = cls ? (cls[1] ?? cls[2] ?? cls[3]).split(/\s+/) : [];
-      if (list.some(c => sized.classes.has(c) || /^(?:[\w-]+:)*text-(?:xs|sm|base|lg|[2-9]?xl|\[[\d.]+(?:px|rem)\])$/.test(c))) continue;
-      add("no-declared-size", m.index, `<${tag}>`, `<${tag}> without a font-size renders at the browser's smaller size, off the type scale`, `one of ${cfg.sizes.join(", ")}px`);
-    }
+    // <small>, <sub>, <sup> without a size render at `smaller`: 83 % of the parent, off any type scale.
+    // Walk the tags with a stack, so a contextual rule only counts inside its context.
+    // Static HTML is walked whole; each <script> is walked on its own, as a fragment.
+    const walk = (markup, base, fragment) => {
+      const stack = [];
+      for (const m of markup.matchAll(new RegExp(`<(/?)([a-zA-Z][\\w.-]*)\\b(${OPEN})>`, "g"))) {
+        const tag = m[2].toLowerCase(), attrs = m[3];
+        if (m[1]) { const i = stack.map(e => e.tag).lastIndexOf(tag); if (i >= 0) stack.length = i; continue; }
+        const el = { tag, classes: classesOf(attrs) };
+        if (SHRUNK.includes(tag)) {
+          checked.element++;
+          const inline = /\bstyle\s*=\s*(?:["'][^"']*|\{\{[^}]*)font(?:-s|S)ize/.test(attrs);
+          const utility = el.classes.some(c => /^(?:[\w-]+:)*text-(?:xs|sm|base|lg|[2-9]?xl|\[[\d.]+(?:px|rem)\])$/.test(c));
+          if (!inline && !utility && !sized.some(chain => reaches(chain, el, stack, fragment)))
+            add("no-declared-size", base + m.index, `<${tag}>`, `<${tag}> without a font-size renders at the browser's smaller size, off the type scale`, `one of ${cfg.sizes.join(", ")}px`);
+        }
+        if (!VOID.has(tag) && !attrs.trimEnd().endsWith("/")) stack.push(el);
+      }
+    };
+    const jsx = ext === ".jsx" || ext === ".tsx";
+    const scripts = [...text.matchAll(/(<script\b[^>]*>)([\s\S]*?)<\/script>/gi)];
+    walk(text.replace(/(<script\b[^>]*>)([\s\S]*?)(?=<\/script>)/gi, (_, open, body) => open + blank(body)), 0, jsx);
+    for (const m of scripts) walk(m[2], m.index + m[1].length, true);
 
     // ---- copy checks: labels and visible text
     const prose = text.replace(/<(style|script)\b[^>]*>[\s\S]*?<\/\1>/gi, blank);
