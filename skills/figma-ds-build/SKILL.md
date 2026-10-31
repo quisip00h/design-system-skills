@@ -120,7 +120,7 @@ tn.characters = "Preview";
 Generic forms of rulings a DS lead made in review. Put the project's versions in `CLAUDE.md`.
 
 - **Icons bind to icon tokens.** Default `Icon/primary`; status icons keep their status token. Never a base black, a raw colour or an opacity below 1 to fake a muted icon. Recolour line icons through their `strokes`; setting `fills` on the icon instance paints a filled box. Never override `strokeAlign` on line icons: `INSIDE` eats open paths.
-- **Field grids are rows, never columns.** A vertical content frame (gap 16) holds horizontal row frames (gap 24, FILL); each row holds N fields (FILL), the last row padded with empty fillers (`fills = []`). Fill all columns before wrapping. Columns break reading order and the row gap.
+- **Field grids are rows, never columns.** A vertical content frame (gap: the row spacing token) holds horizontal row frames (gap: the column spacing token, FILL); each row holds N fields (FILL), the last row padded with empty fillers (`fills = []`). Fill all columns before wrapping. Columns break reading order and the row gap.
 - **Label over value, one pair style everywhere:** label style over value style, gap 4, in cards and in the page header alike.
 - **Toasts live inside the screen frame:** DS toast instance, absolute, horizontally centred, 24 px above the bottom edge, constraints centre and bottom, pinned while scrolling. One toast at a time, one short sentence.
 
