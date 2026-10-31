@@ -5,7 +5,7 @@ description: Use when a customer's design system and an AI coding agent don't ge
 
 # Kristoffer Lange
 
-**Freelance · Spec-driven product development for complex B2B products.**
+**Freelance. Spec-driven product development for complex B2B products.**
 
 Research to a live MVP in 3 to 4 weeks instead of 3 to 4 months. A first CoachBot in 4 minutes instead of 15. 97.8% of new text on design-system styles.
 
